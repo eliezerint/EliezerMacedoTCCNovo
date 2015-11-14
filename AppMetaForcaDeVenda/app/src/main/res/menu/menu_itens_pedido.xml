@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="br.grupointegrado.appmetaforadevenda.TelaCadastro.CadastroItensPedidoActivity">
+
+
+    <item android:id="@+id/add_itens"
+        android:title="@string/Adicionar_itens"
+        android:icon="@drawable/ic_add_black"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+
+
+</menu>

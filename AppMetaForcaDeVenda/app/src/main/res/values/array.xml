@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="Array_de_alterar">
+        <item>Editar</item>
+        <item>Excluir</item>
+
+    </string-array>
+
+    <string-array name="Array_de_selecao">
+        <item>Selecionar</item>
+        <item>Dados detalhados</item>
+
+    </string-array>
+
+    <string-array name="Array_tp_telefone">
+        <item>Residencial</item>
+        <item>Comercial+</item>
+        <item>Celular</item>
+    </string-array>
+
+
+    <string-array name="Array_tp_pessoa_consulta">
+        <item>Cliente</item>
+        <item>Cidade</item>
+    </string-array>
+
+    <string-array name="Array_tp_produto_consulta">
+        <item>Produto</item>
+        <item>Grupo Produto</item>
+        <item>Unidade Medida</item>
+    </string-array>
+
+    <string-array name="Array_tp_pedido_consulta">
+        <item>Consulta Pedido</item>
+    </string-array>
+
+    <string-array name="Array_tp_Dadospedido_consulta">
+        <item>Filial</item>
+        <item>Vendedor</item>
+        <item>Condição Pagamento</item>
+        <item>Produto</item>
+    </string-array>
+
+    <string-array name="Array_tp_Importação_consulta">
+        <item>Importação</item>
+        <item>Exportação</item>
+    </string-array>
+
+    <string-array name="Array_tp_Relatorio_consulta">
+        <item>Relatorio de Pedido</item>
+        <item>Relatorio de Exportação</item>
+        <item>Relatorio de Importação</item>
+    </string-array>
+
+
+</resources>

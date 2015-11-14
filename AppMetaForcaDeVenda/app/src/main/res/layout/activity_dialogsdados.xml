@@ -1,0 +1,51 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+
+        <TextView
+
+            android:text="Importação"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/tvImportacao"
+            android:layout_marginTop="0dp"
+            />
+
+
+        <TextView
+
+            android:text="Exportação"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/tvExportacao"
+            android:layout_marginTop="0dp"
+            />
+
+        <TextView
+
+            android:text="Relatorio Exportação"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/tvRelatorioExportacao"
+            android:layout_marginTop="0dp"
+            />
+
+        <TextView
+
+            android:text="Relatorio Importação"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/tvRelatorioImxportacao"
+            android:layout_marginTop="0dp"
+
+            />
+
+
+
+
+
+</LinearLayout>

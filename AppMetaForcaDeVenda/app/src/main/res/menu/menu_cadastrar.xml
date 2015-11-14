@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="br.grupointegrado.appmetaforadevenda.MenuActivity">
+
+
+        <item
+            android:id="@+id/Estado"
+            android:title="@string/Estado"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/Cidade"
+            android:title="@string/Cidade"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+
+        <item android:id="@+id/Pessoa"
+            android:title="@string/Pessoa"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/Pedido"
+            android:title="@string/Pedido"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/Produto"
+            android:title="@string/Produto"
+            android:orderInCategory="100"
+            app:showAsAction="never" />
+    </menu>
+
+</menu>

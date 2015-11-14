@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="br.grupointegrado.appmetaforadevenda.TelaConsulta.ConsultaCondicaPgtoActivity">
+    <item
+        android:id="@+id/ConsultaCondcaoPgto"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_search_black_24dp"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:title="Consultar Condição de Pagamento"
+        android:text="Consultar  Condição de Pagamento"/>
+</menu>

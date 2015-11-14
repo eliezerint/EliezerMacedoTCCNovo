@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+
+
+    <TextView
+
+        android:text="Cliente"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/tvConsultarCliente"
+        android:layout_marginTop="20dp"
+        android:onClick="ConsultarCliente"
+        />
+
+
+
+    <TextView
+
+        android:text="Cidade"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/tvConsultarCidade"
+        android:onClick="ConsultarCidade"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+
+        android:text="Estado"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/tvConsultarEstado"
+        android:layout_marginTop="20dp"
+        />
+
+
+
+
+
+
+
+</LinearLayout>
