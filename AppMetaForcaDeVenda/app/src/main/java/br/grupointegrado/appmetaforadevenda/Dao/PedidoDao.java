@@ -192,8 +192,9 @@ public class PedidoDao extends AppDao {
 
     public void saveItensPedido(ItensPedido itenspedido) {
         ContentValues cv = new ContentValues();
-        cv.put("idPedido", itenspedido.getIdpedido());
+        cv.put("idItens", itenspedido.getIdItens());
         cv.put("idProduto", itenspedido.getIdProduto());
+        cv.put("idPedido", itenspedido.getIdpedido());
         cv.put("idVendedor", itenspedido.getIdvendedor());
         cv.put("idPessoa", itenspedido.getIdpessoa());
         cv.put("Desconto", (itenspedido.getDesconto()));
@@ -208,9 +209,10 @@ public class PedidoDao extends AppDao {
     }
 
     public List<ItensPedido> listitens(String idpedido,String idVendedor,String idpessoa) {
-        Cursor c = getReadableDatabase().rawQuery("select idProduto, idVendedor, idPessoa, Desconto, " +
-                "Quantidade, vl_unitario, ((vl_unitario - desconto) * Quantidade)as total " +
-                "from ItensPedido where idPedido = ? and idVendedor = ? and idPessoa = ? ", new String[]{idpedido,idVendedor,idpessoa});
+        Cursor c = getReadableDatabase().rawQuery("select i.idItens, i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
+                "      i.Quantidade, i.vl_unitario, ((i.vl_unitario-(i.vl_unitario*i.desconto/100)) * i.Quantidade)as total" +
+                "       from ItensPedido i, Produto p" +
+                "        where i.idPedido = ? and i.idVendedor = ? and i.idPessoa = ? and p.idProduto = i.idProduto", new String[]{idpedido,idVendedor,idpessoa});
 
         List<ItensPedido> itens = new ArrayList<>();
 
@@ -218,13 +220,16 @@ public class PedidoDao extends AppDao {
         while (c.moveToNext()) {
 
             ItensPedido iten = new ItensPedido();
-            iten.setIdpedido(c.getInt(0));
-            iten.setIdpessoa(c.getInt(1));
-            iten.setIdvendedor(c.getInt(2));
-            iten.setDesconto(c.getDouble(3));
-            iten.setQuantidade(c.getDouble(4));
-            iten.setVlunitario(c.getDouble(5));
-            iten.setTotal(c.getDouble(6));
+            iten.setIdItens(c.getInt(0));
+            iten.setIdpedido(c.getInt(1));
+            iten.setIdProduto(c.getInt(2));
+            iten.setNomeproduto(c.getString(3));
+            iten.setIdpessoa(c.getInt(4));
+            iten.setIdvendedor(c.getInt(5));
+            iten.setDesconto(c.getDouble(6));
+            iten.setQuantidade(c.getDouble(7));
+            iten.setVlunitario(c.getDouble(8));
+            iten.setTotal(c.getDouble(9));
 
 
             itens.add(iten);
@@ -232,6 +237,29 @@ public class PedidoDao extends AppDao {
         }
         c.close();
         return itens;
+
+
+    }
+
+    public Integer CosultaItensPedido(){
+        Cursor consulta = getReadableDatabase().rawQuery("Select COALESCE(Max(idItens),0) + 1 AS MAX from ItensPedido ",
+                null);
+        Integer id = 0;
+
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return id = consulta.getInt(0);
+                }
+            } finally {
+                consulta.close();
+            }
+
+
+
+        }
+
+        return id;
 
 
     }

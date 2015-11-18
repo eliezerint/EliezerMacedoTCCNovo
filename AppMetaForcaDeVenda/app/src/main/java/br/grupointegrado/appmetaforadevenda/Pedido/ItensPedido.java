@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 public class ItensPedido implements Serializable{
 
+    private Integer idItens;
     private Integer idpedido;
     private Integer idpessoa;
     private Integer idvendedor;
@@ -17,6 +18,8 @@ public class ItensPedido implements Serializable{
     private Double vlunitario;
     private Double total;
     private Double totalCdesconto;
+    private String nomeproduto;
+
 
 
     public ItensPedido(String produto, Double desconto, Double quantidade, Double vlunitario, Double total) {
@@ -35,12 +38,13 @@ public class ItensPedido implements Serializable{
         this.total = total;
         this.totalCdesconto = totalCdesconto;
     }
-    public ItensPedido(Integer idpedido,Integer idpessoa,Integer idvendedor,Integer idProduto,  Double desconto, Double quantidade, Double vlunitario) {
-        this.idpedido = idpedido;
-        this.idpessoa = idpessoa;
+    public ItensPedido(Integer idItens,Integer idpedido,Integer idpessoa,Integer idvendedor,Integer idProduto,  Double desconto, Double quantidade, Double vlunitario) {
+        this.idItens    = idItens;
+        this.idpedido   = idpedido;
+        this.idpessoa   = idpessoa;
         this.idvendedor = idvendedor;
-        this.IdProduto = idProduto;
-        this.desconto = desconto;
+        this.IdProduto  = idProduto;
+        this.desconto   = desconto;
         this.quantidade = quantidade;
         this.vlunitario = vlunitario;
     }
@@ -50,6 +54,21 @@ public class ItensPedido implements Serializable{
 
     }
 
+    public String getNomeproduto() {
+        return nomeproduto;
+    }
+
+    public void setNomeproduto(String nomeproduto) {
+        this.nomeproduto = nomeproduto;
+    }
+
+    public Integer getIdItens() {
+        return idItens;
+    }
+
+    public void setIdItens(Integer idItens) {
+        this.idItens = idItens;
+    }
 
     public Integer getIdpessoa() {
         return idpessoa;

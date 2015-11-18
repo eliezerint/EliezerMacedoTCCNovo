@@ -35,8 +35,7 @@ public class CadastroPedidoActivity extends AppCompatActivity {
     private  ItensFragment fragItens ;
 
     private PedidoDao pedidodao;
-
-
+    private Integer idItens;
 
 
     @Override
@@ -125,25 +124,35 @@ public class CadastroPedidoActivity extends AppCompatActivity {
                     if (fragPedido.ispedidoAlt() == false) {
                         try {
 
-
                             int idpedido = pedidodao.CosultaPedido();
                             pedidodao.savePedido(fragPedido.getPedido(), idpedido);
 
 
                             int tamanho = fragItens.tamanhoLista();
+                            System.out.print(tamanho + "lista");
+
+                              idItens = pedidodao.CosultaPedido();
+                                if (tamanho > 0) {
+                                    for (int x = 0; x < tamanho; x++) {
+                                        try {
+                                        pedidodao.saveItensPedido(fragItens.getTItens(idItens,idpedido,
+                                                fragPedido.getPedido().getIdpessoa(),
+                                                fragPedido.getPedido().getIdvendedor(), x));
+                                            idItens++;
+
+                                    }catch(Exception e){
+                                        Toast.makeText(this, "" + e, Toast.LENGTH_SHORT).show();
+                                    }
 
 
-                            if (tamanho > 0) {
-                                for (int x = 0; x < tamanho; x++) {
-                                    pedidodao.saveItensPedido(fragItens.getTItens(idpedido,
-                                            fragPedido.getPedido().getIdpessoa(),
-                                            fragPedido.getPedido().getIdvendedor(), x));
+
+                                    }
 
                                 }
 
-                            }
-                            fragItens.LimparLista();
+
                             fragPedido.LimparTela();
+                            fragItens.LimparLista();
 
                             Toast.makeText(this, "Salvo com sucesso", Toast.LENGTH_SHORT).show();
 
@@ -160,13 +169,13 @@ public class CadastroPedidoActivity extends AppCompatActivity {
 
                             int tamanho = fragItens.tamanhoLista();
 
-
+                            idItens = pedidodao.CosultaPedido();
                             if (tamanho > 0) {
                                 for (int x = 0; x < tamanho; x++) {
-                                    pedidodao.saveItensPedido(fragItens.getTItens(idpedido,
+                                    pedidodao.saveItensPedido(fragItens.getTItens(idItens,idpedido,
                                             fragPedido.getPedido().getIdpessoa(),
                                             fragPedido.getPedido().getIdvendedor(), x));
-
+                                     idItens++;
                                 }
 
                             }

@@ -113,10 +113,10 @@ public class PessoaDao extends AppDao {
         cv.put("Endereco", pessoa.getEndereco());
         cv.put("Numero", pessoa.getNumero());
         cv.put("Bairro", pessoa.getBairro());
+        cv.put("Cep", pessoa.getCep());
         cv.put("Data_Nascimento",(dateParaString(pessoa.getDataNascimento())));
         cv.put("Data_Cadastro",(dateParaString(pessoa.getDataCadastro())));
         cv.put("Complemento", pessoa.getComplemento());
-        cv.put("Cep", pessoa.getCep());
         cv.put("Email", pessoa.getEmail());
         cv.put("Razao_socialNome", pessoa.getRazaoSocialNome());
         cv.put("Nome_fantasiaApelido", pessoa.getFantasiaApelido());
@@ -134,12 +134,11 @@ public class PessoaDao extends AppDao {
 
     public List<Pessoa> list() {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
-                "   p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero , p.Bairro , p.cep, t.Numero" +
-                "    , p.Data_Nascimento ," +
-                "    p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido , " +
-                "    p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra " +
-                "    From Pessoa p , Telefone t where t.idPessoa = p.idPessoa  " +
-                "      and  T.ROWID = 1", null);
+                "p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep" +
+                ", p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido , " +
+                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
+                "inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
+                "where t.Numero = (select Numero from Telefone)", null);
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -152,9 +151,9 @@ public class PessoaDao extends AppDao {
             pessoa.setCnpjCpf(c.getString(2));
             pessoa.setEndereco(c.getString(3));
             pessoa.setNumero(c.getString(4));
-            pessoa.setBairro(c.getString(5));
-            pessoa.setCep(c.getString(6));
-            pessoa.setTelefone(c.getString(7));
+            pessoa.setTelefone(c.getString(5));
+            pessoa.setBairro(c.getString(6));
+            pessoa.setCep(c.getString(7));
             pessoa.setDataNascimento(stringParaSQLDate(c.getString(8)));
             pessoa.setDataCadastro(stringParaSQLDate(c.getString(9)));
             pessoa.setComplemento(c.getString(10));
@@ -173,12 +172,13 @@ public class PessoaDao extends AppDao {
         return pessoas;
     }
     public List<Pessoa> list(String nome) {
-        Cursor c = getReadableDatabase().rawQuery("Select  idPessoa,"
-                + "  id_Cidade, CNPJCPF , Endereco , Numero , Bairro , cep"
-                + " , Data_Nascimento ,"
-                +  " Data_Cadastro , Complemento , Email , Razao_socialNome , Nome_fantasiaApelido , "
-                +  " inscriEstadualRG , Data_ultima_compra , Valor_ultima_compra " +
-                "        From Pessoa  where Razao_socialNome like ?", new String[]{"%"+nome+"%"});
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
+                " p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep " +
+                " , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
+                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
+                " inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
+                " where t.Numero = (select Numero from Telefone)  " +
+                " and p.Razao_socialNome like ?" , new String[]{"%"+nome+"%"});
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -191,51 +191,11 @@ public class PessoaDao extends AppDao {
             pessoa.setCnpjCpf(c.getString(2));
             pessoa.setEndereco(c.getString(3));
             pessoa.setNumero(c.getString(4));
-            pessoa.setBairro(c.getString(5));
-            pessoa.setCep(c.getString(6));
-            pessoa.setDataNascimento(stringParaSQLDate(c.getString(7)));
-            pessoa.setDataCadastro(stringParaSQLDate(c.getString(8)));
-            pessoa.setComplemento(c.getString(9));
-            pessoa.setEmail(c.getString(10));
-            pessoa.setRazaoSocialNome(c.getString(11));
-            pessoa.setFantasiaApelido(c.getString(12));
-            pessoa.setInscriEstadualRG(c.getString(13));
-            pessoa.setDataUltimacompra(stringParaSQLDate(c.getString(14)));
-            pessoa.setValorUltimacompra(c.getDouble(15));
-
-
-
-            pessoas.add(pessoa);
-
-        }
-        c.close();
-        return pessoas;
-    }
-    public List<Pessoa> listCidade(String cidade) {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa,"
-                + "  p.id_Cidade, c.Descricao, p.CNPJCPF , p.Endereco , p.Numero , p.Bairro , p.cep"
-                + " ,p.Data_Nascimento ,"
-                +  " p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido , "
-                +  " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra " +
-                "    From Pessoa p, Cidade c" +
-                "  where p.id_Cidade = c.id_Cidade and c.Descricao = ?", new String[]{cidade});
-
-        List<Pessoa> pessoas = new ArrayList<>();
-
-
-        while (c.moveToNext()) {
-
-            Pessoa pessoa = new Pessoa();
-            pessoa.setIdpessoa(c.getInt(0));
-            pessoa.setIdCidade(c.getInt(1));
-            pessoa.setCidade(c.getString(2));
-            pessoa.setCnpjCpf(c.getString(3));
-            pessoa.setEndereco(c.getString(4));
-            pessoa.setNumero(c.getString(5));
+            pessoa.setTelefone(c.getString(5));
             pessoa.setBairro(c.getString(6));
             pessoa.setCep(c.getString(7));
             pessoa.setDataNascimento(stringParaSQLDate(c.getString(8)));
-            pessoa.setDataCadastro(stringParaSQLDate(c.getString(8)));
+            pessoa.setDataCadastro(stringParaSQLDate(c.getString(9)));
             pessoa.setComplemento(c.getString(10));
             pessoa.setEmail(c.getString(11));
             pessoa.setRazaoSocialNome(c.getString(12));
@@ -252,14 +212,15 @@ public class PessoaDao extends AppDao {
         c.close();
         return pessoas;
     }
-
-    public List<Pessoa> listCpfCnpj(String cpfCnpj) {
-        Cursor c = getReadableDatabase().rawQuery("Select  idPessoa,"
-                + "  id_Cidade, CNPJCPF , Endereco , Numero , Bairro , cep"
-                + " , Data_Nascimento ,"
-                +  " Data_Cadastro , Complemento , Email , Razao_socialNome , Nome_fantasiaApelido , "
-                +  " inscriEstadualRG , Data_ultima_compra , Valor_ultima_compra " +
-                "        From Pessoa  where CNPJCPF like ?", new String[]{cpfCnpj});
+    public List<Pessoa> listCidade(String cidade) {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
+                " p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep " +
+                " , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
+                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
+                " inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
+                " inner JOIN Cidade c on (p.id_Cidade = c.id_Cidade)" +
+                " where t.Numero = (select Numero from Telefone)" +
+                " and c.descricao = ?", new String[]{cidade});
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -272,17 +233,61 @@ public class PessoaDao extends AppDao {
             pessoa.setCnpjCpf(c.getString(2));
             pessoa.setEndereco(c.getString(3));
             pessoa.setNumero(c.getString(4));
-            pessoa.setBairro(c.getString(5));
-            pessoa.setCep(c.getString(6));
-            pessoa.setDataNascimento(stringParaSQLDate(c.getString(7)));
-            pessoa.setDataCadastro(stringParaSQLDate(c.getString(8)));
-            pessoa.setComplemento(c.getString(9));
-            pessoa.setEmail(c.getString(10));
-            pessoa.setRazaoSocialNome(c.getString(11));
-            pessoa.setFantasiaApelido(c.getString(12));
-            pessoa.setInscriEstadualRG(c.getString(13));
-            pessoa.setDataUltimacompra(stringParaSQLDate(c.getString(14)));
-            pessoa.setValorUltimacompra(c.getDouble(15));
+            pessoa.setTelefone(c.getString(5));
+            pessoa.setBairro(c.getString(6));
+            pessoa.setCep(c.getString(7));
+            pessoa.setDataNascimento(stringParaSQLDate(c.getString(8)));
+            pessoa.setDataCadastro(stringParaSQLDate(c.getString(9)));
+            pessoa.setComplemento(c.getString(10));
+            pessoa.setEmail(c.getString(11));
+            pessoa.setRazaoSocialNome(c.getString(12));
+            pessoa.setFantasiaApelido(c.getString(13));
+            pessoa.setInscriEstadualRG(c.getString(14));
+            pessoa.setDataUltimacompra(stringParaSQLDate(c.getString(15)));
+            pessoa.setValorUltimacompra(c.getDouble(16));
+
+
+
+
+            pessoas.add(pessoa);
+
+        }
+        c.close();
+        return pessoas;
+    }
+
+    public List<Pessoa> listCpfCnpj(String cpfCnpj) {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
+                " p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep " +
+                " , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
+                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
+                " inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
+                " where t.Numero = (select Numero from Telefone)  " +
+                " and p.CNPJCPF = ?" , new String[]{cpfCnpj});
+
+        List<Pessoa> pessoas = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pessoa pessoa = new Pessoa();
+            pessoa.setIdpessoa(c.getInt(0));
+            pessoa.setIdCidade(c.getInt(1));
+            pessoa.setCnpjCpf(c.getString(2));
+            pessoa.setEndereco(c.getString(3));
+            pessoa.setNumero(c.getString(4));
+            pessoa.setTelefone(c.getString(5));
+            pessoa.setBairro(c.getString(6));
+            pessoa.setCep(c.getString(7));
+            pessoa.setDataNascimento(stringParaSQLDate(c.getString(8)));
+            pessoa.setDataCadastro(stringParaSQLDate(c.getString(9)));
+            pessoa.setComplemento(c.getString(10));
+            pessoa.setEmail(c.getString(11));
+            pessoa.setRazaoSocialNome(c.getString(12));
+            pessoa.setFantasiaApelido(c.getString(13));
+            pessoa.setInscriEstadualRG(c.getString(14));
+            pessoa.setDataUltimacompra(stringParaSQLDate(c.getString(15)));
+            pessoa.setValorUltimacompra(c.getDouble(16));
 
 
 

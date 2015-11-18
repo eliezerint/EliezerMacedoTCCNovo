@@ -3,6 +3,7 @@ package br.grupointegrado.appmetaforadevenda.TelaConsulta;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ import br.grupointegrado.appmetaforadevenda.Pessoa.Pessoa;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Telefone;
 import br.grupointegrado.appmetaforadevenda.TelaCadastro.CadastroPessoaActivity;
 import br.grupointegrado.appmetaforadevenda.R;
+import br.grupointegrado.appmetaforadevenda.Util.Mask;
 
 public class ConsultaClienteActivity extends AppCompatActivity {
 
@@ -103,7 +105,7 @@ public class ConsultaClienteActivity extends AppCompatActivity {
                     finish();
                 }else {
 
-                    EditarPessoa(getPessoa(pessoa));
+                    MaterialDialogLigar(pessoa);
 
 
                 }
@@ -148,6 +150,7 @@ public class ConsultaClienteActivity extends AppCompatActivity {
              filter = null;
              conteudocidade = autocomplete.getText().toString();
              Consultacliente();
+
          }
      });
 
@@ -241,6 +244,8 @@ public class ConsultaClienteActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.ConsultaCliente:
+                autocomplete.setText("");
+                conteudocidade = null;
                 Consultacliente();
                 break;
 
@@ -267,6 +272,9 @@ public class ConsultaClienteActivity extends AppCompatActivity {
         } else if (conteudocidade != null){
             adaptercliente.setItems(clientedao.listCidade(conteudocidade));
             adaptercliente.notifyDataSetChanged();
+
+
+
         }else {
             adaptercliente.setItems(clientedao.list());
             adaptercliente.notifyDataSetChanged();
@@ -277,9 +285,24 @@ public class ConsultaClienteActivity extends AppCompatActivity {
 
     public void Consultacliente() {
 
-        if (conteudocidade != null){
+        if (conteudoSearch != null){
+            if (soExisteNumero(conteudoSearch)){
+
+                adaptercliente.setItems(clientedao.listCpfCnpj(conteudoSearch));
+
+                adaptercliente.notifyDataSetChanged();
+
+            }else {
+                adaptercliente.setItems(clientedao.list(conteudoSearch));
+
+                adaptercliente.notifyDataSetChanged();
+            }
+        } else if (conteudocidade != null){
             adaptercliente.setItems(clientedao.listCidade(conteudocidade));
             adaptercliente.notifyDataSetChanged();
+
+
+
         }else {
             adaptercliente.setItems(clientedao.list());
             adaptercliente.notifyDataSetChanged();
@@ -312,6 +335,43 @@ public class ConsultaClienteActivity extends AppCompatActivity {
                 .show();
 
     }
+    public void MaterialDialogLigar(final Pessoa pessoa) {
+        boolean wrapInScrollView = true;
+        new MaterialDialog.Builder(this)
+                .title("Cliente")
+                .items(R.array.Array_de_Ligar)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+
+                        if (text.equals("Ligar")) {
+
+                            Uri uri = Uri.parse("tel:" + "015" + Mask.unmask(pessoa.getTelefone()));
+                            Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                            startActivity(intent);
+
+
+                            dialog.dismiss();
+                        } else if (text.equals("Mandar Email")) {
+
+                            Intent email = new Intent(Intent.ACTION_SEND);
+                            email.putExtra(Intent.EXTRA_EMAIL, new String[]{pessoa.getEmail()});
+                            email.putExtra(Intent.EXTRA_SUBJECT, "");
+                            email.putExtra(Intent.EXTRA_TEXT, "");
+                            email.setType("message/rfc822");
+                            startActivity(Intent.createChooser(email, "Enviar email  :"));
+
+                            dialog.dismiss();
+                        }
+
+
+                    }
+
+                })
+                .show();
+
+    }
+
 
     public void EditarPessoa(Pessoa pessoa) {
 

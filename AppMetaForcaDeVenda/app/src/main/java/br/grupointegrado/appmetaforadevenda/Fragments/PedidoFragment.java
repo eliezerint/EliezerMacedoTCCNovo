@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -133,8 +134,8 @@ public class PedidoFragment extends Fragment implements FragmentTab {
         if (pedidoAlt != null && estadodofragment == false) {
             setPedidoalt(pedidoAlt);
             estadodofragment = true;
-        }else if (pedidoAlt == null && estadodofragment == false) {
-           edit_valor_Total.setText("0.00");
+        }else {
+            edit_valor_Total.setText("0.00");
         }
 
 
@@ -215,12 +216,10 @@ public class PedidoFragment extends Fragment implements FragmentTab {
 
     private void setPedidoalt(Pedido pedidoAlt) {
         totalpedido = pedidoAlt.getTotal();
-
         idpedido = pedidoAlt.getIdpedido();
         edit_nome_cliente.setText(pessoadao.CosultaClienteNome(pedidoAlt.getIdpessoa().toString()));
         edit_cond_pgto.setText(condpgtodao.nomeCondPgto(pedidoAlt.getIdCondicaopag().toString()));
         edit_filial.setText(filialdao.nomeFilial(pedidoAlt.getIdfilial().toString()));
-        System.out.println(totalpedido);
         edit_valor_Total.setText(totalpedido.toString());
         edit_data_pedido.setText(ConvesorUtil.dateParaString(pedidoAlt.getDatapedido()));
 

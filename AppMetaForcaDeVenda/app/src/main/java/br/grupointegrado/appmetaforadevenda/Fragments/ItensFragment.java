@@ -9,7 +9,10 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
@@ -41,7 +44,8 @@ public class ItensFragment extends Fragment implements FragmentTab {
     public Double somaitens = 0.00 ;
     private Pedido pedidoAlt;
     private PedidoDao pedidodao;
-    private boolean estadodofragment;
+    private boolean estadodofragment = false;
+    private Integer posicaolista;
 
 
     @Override
@@ -82,15 +86,17 @@ public class ItensFragment extends Fragment implements FragmentTab {
             @Override
             protected void onItemClickListener(int adapterPosition, int layoutPosition) {
 
+                ItensPedido itens =  adapteritenspedido.getItems().get(adapterPosition);
 
-
+                AlterarItenseDialog(adapterPosition,itens);
 
             }
 
             @Override
             protected boolean onLongItemClickListener(int adapterPosition, int layoutPosition) {
+                ItensPedido itens =  adapteritenspedido.getItems().get(adapterPosition);
 
-
+                AlterarItenseDialog(adapterPosition,itens);
                 return true;
             }
         };
@@ -111,20 +117,27 @@ public class ItensFragment extends Fragment implements FragmentTab {
              if (pedidoAlt != null && estadodofragment == false) {
               listaitens = pedidodao.listitens(pedidoAlt.getIdpedido().toString(),pedidoAlt.getIdvendedor().toString(),
                       pedidoAlt.getIdpessoa().toString());
-               ConsultaItensPedido();
-              estadodofragment = true;
-           } else if (listaitens != null) {
                  somaitens = 0.00;
 
-                     for (int x = 0; x < listaitens.size(); x++){
-                         somaitens += listaitens.get(x).getTotal();
-                     }
-
-
-       }
-
+                 for (int x = 0; x < listaitens.size(); x++) {
+                     somaitens += listaitens.get(x).getTotal();
+                 }
+               ConsultaItensPedido();
+              estadodofragment = true;
+                 System.out.println(pedidodao.listitens(pedidoAlt.getIdpedido().toString(),pedidoAlt.getIdvendedor().toString(),
+                         pedidoAlt.getIdpessoa().toString())+"lista cheia");
+           }else {
+                 somaitens = 0.00;
+                 for (int x = 0; x < listaitens.size(); x++) {
+                     somaitens += listaitens.get(x).getTotal();
+                 }
+             }
 
     }
+
+
+
+
 
     public void ConsultaItensPedido(){
         adapteritenspedido.setItems(listaitens);
@@ -142,6 +155,12 @@ public class ItensFragment extends Fragment implements FragmentTab {
     private void addItensPedido() {
         Intent intent = new Intent(getActivity(), ConsultaProdutoActivity.class);
         intent.putExtra("selecionando_produto", true);
+        startActivityForResult(intent, REQUEST_ADD_ITENSPEDIDO);
+    }
+
+    private void editItensPedido(Integer position) {
+        Intent intent = new Intent(getActivity(), ConsultaProdutoActivity.class);
+        intent.putExtra("editando_produto", listaitens.get(position));
         startActivityForResult(intent, REQUEST_ADD_ITENSPEDIDO);
     }
 
@@ -163,9 +182,9 @@ public class ItensFragment extends Fragment implements FragmentTab {
 
     }
 
-    public ItensPedido getTItens(Integer idpedido, Integer idpessoa,Integer idvendedor, Integer x) {
+    public ItensPedido getTItens(Integer idItens,Integer idpedido, Integer idpessoa,Integer idvendedor, Integer x) {
 
-        return new ItensPedido(idpedido,idpessoa,idvendedor,
+        return new ItensPedido(idItens,idpedido,idpessoa,idvendedor,
                 (adapteritenspedido.getItems().get(x).getIdProduto()),
                 adapteritenspedido.getItems().get(x).getDesconto(),
                 adapteritenspedido.getItems().get(x).getQuantidade(),
@@ -173,6 +192,38 @@ public class ItensFragment extends Fragment implements FragmentTab {
 
 
     }
+    public void AlterarItenseDialog(final Integer posicao, final ItensPedido itens) {
+
+        new MaterialDialog.Builder(this.getActivity())
+                .title("Itens")
+                .items(R.array.Array_de_alterar)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+
+                        if (text.equals("Editar")) {
+
+                                editItensPedido(posicao);
+
+
+
+
+                            dialog.dismiss();
+                        } else if (text.equals("Excluir")) {
+
+                            listaitens.remove(listaitens.get(posicao));
+                            ConsultaItensPedido();
+
+                            dialog.dismiss();
+                        }
+
+
+                    }
+
+                })
+                .show();
+    }
+
 
 
 

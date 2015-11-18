@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -32,15 +33,11 @@ import br.grupointegrado.appmetaforadevenda.Dao.VendedorDao;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterProduto;
 import br.grupointegrado.appmetaforadevenda.MainActivity;
 import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
-import br.grupointegrado.appmetaforadevenda.Produtos.Grupos_Produtos;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
 import br.grupointegrado.appmetaforadevenda.Produtos.TabelaItenPreco;
 import br.grupointegrado.appmetaforadevenda.Produtos.Tabelapreco;
-import br.grupointegrado.appmetaforadevenda.Produtos.UnidadeMedida;
 import br.grupointegrado.appmetaforadevenda.R;
 import br.grupointegrado.appmetaforadevenda.Vendedor.Vendedor;
-import eu.inmite.android.lib.validations.form.FormValidator;
-import eu.inmite.android.lib.validations.form.callback.SimpleErrorPopupCallback;
 
 public class ConsultaProdutoActivity extends AppCompatActivity {
 
@@ -81,6 +78,8 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
     private boolean selecionandoProduto = false;
     private String conteudoSearch;
     private List<Vendedor> listaVendedor;
+    private ItensPedido editandoProduto ;
+    private List<Produtos> listaproduto;
 
 
     @Override
@@ -101,8 +100,11 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
       recyclerviewProdutos = (RecyclerView) findViewById(R.id.RecyviewProduto);
 
-        if (getIntent().getExtras() != null)
+        if (getIntent().getExtras() != null) {
             selecionandoProduto = getIntent().getExtras().getBoolean("selecionando_produto", false);
+
+        }
+
 
 
         final StaggeredGridLayoutManager llm = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
@@ -123,7 +125,6 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
                     insertItens(produto, itenpedido);
 
 
-                } else {
                 }
             }
 
@@ -145,9 +146,17 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         consultaProduto();
 
         getDadosSearch(this.getIntent());
+
+        editandoProduto =  (ItensPedido)  getIntent().getSerializableExtra("editando_produto");
+        if (editandoProduto != null){
+              produto =  produtodao.cosultaIdproduto(editandoProduto.getIdProduto().toString());
+              idproduto = produto.getIdproduto();
+             insertItens( produto, editandoProduto);
+        }
+
     }
 
-    public void telItens(ItensPedido itens) {
+    public void getItens(ItensPedido itens) {
         Intent data = new Intent();
         data.putExtra("itens_object", itens);
         setResult(RESULT_OK, data);
@@ -173,16 +182,16 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
                                 edit_valorTotal.setText(edit_dialogvalorTotalcomDesconto.getText().toString());
                             }
                             itenpedido.setIdProduto(produto.getIdproduto());
-                            itenpedido.setProduto(produto.getDescricao());
+                            itenpedido.setNomeproduto(produto.getDescricao());
 
                             itenpedido.setVlunitario(Double.parseDouble(edit_vlunitario.getText().toString()));
                             itenpedido.setQuantidade(Double.parseDouble(edit_quantidade.getText().toString()));
-                            itenpedido.setDesconto(Double.parseDouble(edit_descontovalor.getText().toString()));
+                            itenpedido.setDesconto(Double.parseDouble(edit_descontopercentual.getText().toString()));
                             itenpedido.setTotal(Double.parseDouble(edit_valorTotal.getText().toString()));
                             itenpedido.setTotalCdesconto(Double.parseDouble(edit_dialogvalorTotalcomDesconto.getText().toString()));
 
 
-                            telItens(itenpedido);
+                            getItens(itenpedido);
 
                             idproduto = 0;
 
@@ -211,7 +220,8 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         spinnerTp_tabela  = (MaterialBetterSpinner) dialog.findViewById(R.id.SpinnerTpTabela);
         spinnerTabela_preco  = (MaterialBetterSpinner) dialog.findViewById(R.id.SpinnerPreco);
 
-
+        listaVendedor = vendedordao.listId(MainActivity.idvendedortelainicial.toString());
+        max_desconto = listaVendedor.get(0).getMax_desconto();
 
         listTpTabela =  produtodao.listPrecoVEnda(idproduto.toString());
 
@@ -223,8 +233,13 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
         if (listTpTabela != null ){
             spinnerTp_tabela.setText(listTpTabela.get(0).getDescricao());
-            consultaTabelaPreco(listTpTabela.get(0).getIdTabelapreco(),0);
+            consultaTabelaPreco(listTpTabela.get(0).getIdTabelapreco(), 0);
+            if (editandoProduto != null){
+                editandoItens(editandoProduto,dialog);
+            }
         }
+
+
 
         spinnerTp_tabela.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -251,8 +266,7 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         });
 
 
-        listaVendedor = vendedordao.listId(MainActivity.idvendedortelainicial.toString());
-        max_desconto = listaVendedor.get(0).getMax_desconto();
+
 
 
          if (listTpTabelaiten != null){
@@ -305,6 +319,17 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
 
 }
+
+    private void editandoItens(ItensPedido itens, MaterialDialog dialog) {
+        edit_quantidade.setText(itens.getQuantidade().toString());
+        edit_descontopercentual.setText(itens.getQuantidade().toString());
+        somaQuantidade();
+        calculeDescontoPerc(dialog);
+        somaQuantidade();
+
+
+
+    }
 
     private void calculeDescontoValor(MaterialDialog dialog) {
         double soma = 0.00, unitario = 0.00, descontoperc = 0, descontovalor = 0.00,
@@ -414,6 +439,8 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
         }
     }
+
+
 
 
     @Override
@@ -579,8 +606,8 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
         }else if (edit_descontovalor.getText().toString().isEmpty()){
             edit_descontovalor.setText("0");
+            edit_descontopercentual.setText("0");
             edit_dialogvalorTotalcomDesconto.setText("0");
-            edit_quantidade.setText("1");
             return true;
         }else if (!edit_descontovalor.getText().toString().isEmpty()) {
 

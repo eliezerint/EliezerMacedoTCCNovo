@@ -23,10 +23,11 @@
     <string name="SQL_CREATE_TELEFONE">
            CREATE TABLE Telefone (
                 idTelefone INTEGER PRIMARY KEY AUTOINCREMENT,
-                idPessoa INTEGER ,
+                idPessoa INTEGER not null,
                 Numero VARCHAR(11) NOT NULL,
                 Descricao VARCHAR(60),
                 CPFCNPJ VARCHAR (18) NOT NULL,
+        FOREIGN KEY(idPessoa)
          REFERENCES Pessoa(idPessoa));
     </string>
       <string name="SQL_CREATE_PESSOA">
@@ -37,7 +38,6 @@
           Endereco VARCHAR(50) NULL,
           Numero VARCHAR(10) NULL,
           Bairro VARCHAR(50) NULL,
-          Telefone  VARCHAR(20) NULL,
           Data_Cadastro DATE NULL,
           Data_Nascimento DATE NULL,
           Complemento VARCHAR(10) NULL,
@@ -156,28 +156,31 @@
           );
    </string>
      <string name="SQL_CREATE_TABELA_PEDIDO" >
-        CREATE TABLE Pedido (idPedido INTEGER NOT NULL,
-       idVendedor INTEGER NOT NULL REFERENCES Vendedor (idVendedor),
-      idPessoa INTEGER NOT NULL REFERENCES Pessoa (idPessoa),
-       idFilial INTEGER REFERENCES Filial (idFilial) NOT NULL,
-       idcondicaopagamento INTEGER REFERENCES
+        CREATE TABLE Pedido (
+         idPedido INTEGER NOT NULL,
+         idVendedor INTEGER NOT NULL REFERENCES Vendedor (idVendedor),
+         idPessoa INTEGER NOT NULL REFERENCES Pessoa (idPessoa),
+         idFilial INTEGER REFERENCES Filial (idFilial) NOT NULL,
+         idcondicaopagamento INTEGER REFERENCES
          Condicao_pagamento (idcondicaopagamento) NOT NULL,
-        Data_pedido DATE,
+         Data_pedido DATE,
          Valor_total DOUBLE (5, 2),
-       PRIMARY KEY (idPedido, idVendedor, idPessoa))
+         PRIMARY KEY (idPedido, idVendedor, idPessoa));
    </string>
 
      <string name="SQL_CREATE_TABELA_ITENS_PEDIDO" >
        CREATE TABLE ItensPedido (
-         idPedido INTEGER REFERENCES Pedido (idPedido),
-         idProduto INTEGER REFERENCES Produto (idProduto),
-         idVendedor INTEGER REFERENCES Vendedor (idVendedor),
-         idPessoa INTEGER REFERENCES Pessoa (idPessoa),
-         Desconto DOUBLE(5,2) NULL,
-         Quantidade DOUBLE(5,2) NULL,
-         vl_unitario DOUBLE(5,2) NULL,
-         PRIMARY KEY(idPedido, idProduto, idVendedor, idPessoa)
-        );
+         idItens INTEGER NOT NULL ,
+         idPedido INTEGER NOT NULL,
+         idVendedor INTEGER NOT NULL,
+         idPessoa INTEGER NOT NULL,
+         idProduto REFERENCES Produto (idProduto),
+         Desconto DOUBLE (5, 2),
+         Quantidade DOUBLE (5, 2),
+         vl_unitario DOUBLE (5, 2),
+         FOREIGN KEY (idPedido, idVendedor, idPessoa)
+         REFERENCES Pedido (idPedido, idVendedor, idPessoa),
+         PRIMARY KEY (idItens, idPedido, idVendedor, idPessoa));
    </string>
 
 </resources>

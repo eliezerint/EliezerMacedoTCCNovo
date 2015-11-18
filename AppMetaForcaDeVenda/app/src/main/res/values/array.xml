@@ -5,6 +5,13 @@
         <item>Editar</item>
         <item>Excluir</item>
 
+
+    </string-array>
+    <string-array name="Array_de_Ligar">
+        <item>Ligar</item>
+        <item>Mandar Email</item>
+
+
     </string-array>
 
     <string-array name="Array_de_selecao">

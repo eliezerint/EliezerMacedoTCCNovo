@@ -1,6 +1,7 @@
 package br.grupointegrado.appmetaforadevenda.TelaCadastro;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -117,10 +118,14 @@ public class CadastroPessoaActivity extends AppCompatActivity {
                             int tamanho = fragTel.tamanhoLista();
 
 
+
                             if (tamanho > 0) {
                                 for (int x = 0; x < tamanho; x++) {
-                                    pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
-
+                                    try {
+                                        pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                    }catch (Exception e){
+                                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
 
                             }
@@ -144,8 +149,11 @@ public class CadastroPessoaActivity extends AppCompatActivity {
                             if (tamanho > 0) {
 
                                 for (int x = 0; x < tamanho; x++) {
-                                     pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
-
+                                    try {
+                                        pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                    }catch (Exception e){
+                                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
 
                             }

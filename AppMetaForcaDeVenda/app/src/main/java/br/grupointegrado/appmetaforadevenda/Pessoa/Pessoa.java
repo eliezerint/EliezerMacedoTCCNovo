@@ -32,6 +32,8 @@ public class Pessoa implements Serializable {
 
 
 
+
+
     public Pessoa( Integer idCidade, String cnpjCpf,String razaoSocialNome, String fantasiaApelido,
                    String inscriEstadualRG , String endereco ,String Numero, String bairro, String complemento, String cep,
                   String Email,Date dataUltimacompra , double valorUltimacompra,Date dataCadastro) {

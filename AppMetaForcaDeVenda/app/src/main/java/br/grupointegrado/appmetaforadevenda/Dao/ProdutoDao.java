@@ -36,8 +36,40 @@ public class ProdutoDao extends AppDao {
 
     }
 
-    public List<Produtos> list() {
+    public Produtos cosultaIdproduto(String idproduto) {
         Cursor c = getReadableDatabase().rawQuery("Select idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao , um.Descricao, " +
+                "grp.Descricao from Produto p, UnidadeMedida um , GrupoProduto grp " +
+                "where um.idUnidadeMedida = p.idUnidadeMedida and grp.idGrupo_produto = p.idGrupo_produto" +
+                " and idProduto = ? ", new String[]{idproduto});
+        Produtos produto = new Produtos();
+
+        if (c != null) {
+            try {
+                if (c.moveToFirst()) {
+
+                    produto.setIdproduto(c.getInt(0));
+                    produto.setIdgrupopoduto(c.getInt(1));
+                    produto.setIdUnidademedida(c.getInt(2));
+                    produto.setDescricao(c.getString(3));
+                    produto.setDescricaoUnidademedida(c.getString(4));
+                    produto.setDescricaoGrupoProduto(c.getString(5));
+
+                    return produto;
+
+                }
+            } finally {
+                c.close();
+            }
+
+        }
+
+        return produto;
+
+    }
+
+    public List<Produtos> list() {
+        Cursor c = getReadableDatabase().rawQuery("Select idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao ," +
+                " um.Descricao, " +
                 "   grp.Descricao from Produto p, UnidadeMedida um , GrupoProduto grp " +
                 "    where um.idUnidadeMedida = p.idUnidadeMedida and grp.idGrupo_produto = p.idGrupo_produto" , null);
 
