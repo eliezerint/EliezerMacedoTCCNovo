@@ -66,6 +66,7 @@
             android:id="@+id/EditIbge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:hint="IBGE"
             android:digits="1234567890."
             android:inputType="number"

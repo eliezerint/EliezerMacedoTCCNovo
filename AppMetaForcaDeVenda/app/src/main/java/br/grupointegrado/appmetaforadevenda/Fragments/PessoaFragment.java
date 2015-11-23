@@ -169,7 +169,8 @@ public class PessoaFragment extends Fragment implements DatePickerDialog.OnDateS
     private PessoaDao clientedao;
 
     private Pessoa pessoaalt;
-
+    private TextWatcher rgmask;
+    private TextWatcher Incricaomask;
 
 
     @Override
@@ -233,6 +234,12 @@ public class PessoaFragment extends Fragment implements DatePickerDialog.OnDateS
         editCnpj.addTextChangedListener(cnpjmask);
         cepmask = Mask.insert("##.###-###", editcep);
         editcep.addTextChangedListener(cepmask);
+
+        rgmask = Mask.insert("##########", editRg);
+        editRg.addTextChangedListener(rgmask);
+
+        Incricaomask = Mask.insert("##############", editInscricaEstadual);
+        editInscricaEstadual.addTextChangedListener(Incricaomask);
 
         editRg.setMaxCharacters(10);
         editInscricaEstadual.setMaxCharacters(14);

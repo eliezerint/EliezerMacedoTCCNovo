@@ -108,67 +108,71 @@ public class CadastroPessoaActivity extends AppCompatActivity {
 
                 PessoaFragment fragPes = (PessoaFragment) tabsAdapter.getFragments()[0];
                 TelefoneFragment fragTel = (TelefoneFragment) tabsAdapter.getFragments()[1];
-                if (fragPes.Validate() == true) {
-                    if (fragPes.ispessoAlt() == false) {
+                int tamanho = fragTel.tamanhoLista();
+                if (fragPes.Validate() == true ) {
+                    if (tamanho > 0) {
 
-                        try {
-                            pessoadao.savePessoa(fragPes.getPessoa());
-                            int idpessoa = pessoadao.CosultaClienteCNPJCPF(fragPes.getPessoa().getCnpjCpf());
-                            String CPFCNPJ = fragPes.getPessoa().getCnpjCpf();
-                            int tamanho = fragTel.tamanhoLista();
+                        if (fragPes.ispessoAlt() == false) {
+
+                            try {
+                                pessoadao.savePessoa(fragPes.getPessoa());
+                                int idpessoa = pessoadao.CosultaClienteCNPJCPF(fragPes.getPessoa().getCnpjCpf());
+                                String CPFCNPJ = fragPes.getPessoa().getCnpjCpf();
 
 
-
-                            if (tamanho > 0) {
-                                for (int x = 0; x < tamanho; x++) {
-                                    try {
-                                        pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
-                                    }catch (Exception e){
-                                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                if (tamanho > 0) {
+                                    for (int x = 0; x < tamanho; x++) {
+                                        try {
+                                            pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                        } catch (Exception e) {
+                                            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
+
                                 }
+                                fragTel.LimparLista();
+                                fragPes.LimparCampos();
+                                fragPes.editDataCadastro.setText(fragPes.getDateTime());
+                                Toast.makeText(this, "Salvo com sucesso", Toast.LENGTH_SHORT).show();
 
+                            } catch (Exception e) {
+                                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                             }
-                            fragTel.LimparLista();
-                            fragPes.LimparCampos();
-                            fragPes.editDataCadastro.setText(fragPes.getDateTime());
-                            Toast.makeText(this, "Salvo com sucesso", Toast.LENGTH_SHORT).show();
+                        } else {
+                            try {
 
-                        } catch (Exception e) {
-                            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                String CPFCNPJ = fragPes.getPessoa().getCnpjCpf();
+                                int idpessoa = pessoadao.CosultaClienteCNPJCPF(CPFCNPJ);
+
+                                pessoadao.Update(fragPes.getPessoa());
+                                pessoadao.deleteTelefone(idpessoa);
+                                if (tamanho > 0) {
+
+                                    for (int x = 0; x < tamanho; x++) {
+                                        try {
+                                            pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                        } catch (Exception e) {
+                                            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                }
+                                fragTel.LimparLista();
+                                fragPes.LimparCampos();
+                                Toast.makeText(this, "Alterado com sucesso", Toast.LENGTH_SHORT).show();
+                                finish();
+
+                            } catch (Exception e) {
+                                Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                            }
                         }
+
                     } else {
-                        try {
+                        Toast.makeText(getBaseContext(), "Insere um Telefone", Toast.LENGTH_SHORT).show();
 
-                            String CPFCNPJ = fragPes.getPessoa().getCnpjCpf();
-                            int idpessoa = pessoadao.CosultaClienteCNPJCPF(CPFCNPJ);
-                            int tamanho = fragTel.tamanhoLista();
-
-                            pessoadao.Update(fragPes.getPessoa());
-                            pessoadao.deleteTelefone(idpessoa);
-                            if (tamanho > 0) {
-
-                                for (int x = 0; x < tamanho; x++) {
-                                    try {
-                                        pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
-                                    }catch (Exception e){
-                                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                            }
-                            fragTel.LimparLista();
-                            fragPes.LimparCampos();
-                            Toast.makeText(this, "Alterado com sucesso", Toast.LENGTH_SHORT).show();
-                            finish();
-
-                        } catch (Exception e) {
-                            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-                        }
                     }
 
                 }
-
 
                 break;
 

@@ -17,6 +17,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
 import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
+import br.grupointegrado.appmetaforadevenda.Listagem.AdapterSpinnerEstado;
+import br.grupointegrado.appmetaforadevenda.Listagem.AdapterSpinnerPais;
 import br.grupointegrado.appmetaforadevenda.Listagem.SpinnerArrayAdapter;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
@@ -42,7 +44,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
     private String conteudopais;
     private String conteudoestado;
 
-    private ArrayAdapter adapter_estado;
+    private AdapterSpinnerEstado adapter_estado;
     private SpinnerArrayAdapter spinneradapter;
     private ArrayAdapter<Pais> adapter_pais;
 
@@ -60,11 +62,10 @@ public class CadastroCidadeActivity extends AppCompatActivity {
     private MaterialBetterSpinner SpinnerEstado;
 
     @NotEmpty(messageId =  R.string.Campo_vazio, order = 3)
-    @MaxLength(value = 60, messageId = R.string.max_cidade, order = 4)
+    @MaxLength(value = 60, messageId = R.string.max_cidade, order = 3)
     private MaterialEditText EditCidade;
 
-    @NotEmpty(messageId =  R.string.Campo_vazio, order = 4)
-    @MaxLength(value = 7, messageId = R.string.max_ibge, order = 4)
+    @MinLength(value = 7, messageId = R.string.min_ibge, order = 5)
     private MaterialEditText EditIbge;
 
 
@@ -79,6 +80,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
 
     private Intent cidadeIntent;
     private long tempopresionadovoltar = 0;
+    private TextWatcher Ibgemask;
 
 
     @Override
@@ -116,8 +118,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
 
         lista_pais = paisdao.list();
 
-        adapter_pais = new ArrayAdapter<Pais>(this, android.R.layout.simple_list_item_1, lista_pais);
-
+        adapter_pais = new AdapterSpinnerPais(this, lista_pais);
 
         SpinnerPais.setAdapter(adapter_pais);
 
@@ -125,13 +126,19 @@ public class CadastroCidadeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 conteudopais = SpinnerPais.getText().toString();
+                if (conteudopais.equals("BR")) {
+                    EditIbge.setVisibility(View.VISIBLE);
+                } else {
+                    EditIbge.setVisibility(View.GONE);
+                }
                 consultaestado();
             }
 
         });
 
-
         consultaestado();
+
+
 
 
         SpinnerEstado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -143,8 +150,34 @@ public class CadastroCidadeActivity extends AppCompatActivity {
         });
 
 
+
+        EditIbge.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                   if (!verificaEditIbge()){
+                       EditIbge.setError("O campo IBGE não pode ser vazio");
+                   }
+                }
+            }
+        });
+
+
         FormValidator.startLiveValidation(this, findViewById(R.id.cad_cid_container),new SimpleErrorPopupCallback(getBaseContext()));
 
+    }
+
+    private Boolean verificaEditIbge() {
+        if (SpinnerPais.getText().toString().isEmpty()){
+            if(EditIbge.getText().toString().isEmpty()){
+               return false;
+            }
+        }else if(SpinnerPais.getText().toString().equals("BR")){
+            if(EditIbge.getText().toString().isEmpty()){
+               return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -202,12 +235,9 @@ public class CadastroCidadeActivity extends AppCompatActivity {
         }
 
 
-
-        adapter_estado = new ArrayAdapter<Estado>(this, android.R.layout.simple_list_item_1, lista);
-
+        adapter_estado = new AdapterSpinnerEstado(this, lista);
 
         SpinnerEstado.setAdapter(adapter_estado);
-
 
         adapter_estado.notifyDataSetChanged();
 
@@ -274,7 +304,11 @@ public class CadastroCidadeActivity extends AppCompatActivity {
     public boolean Validate(){
         final boolean isValid = FormValidator.validate(this, new SimpleErrorPopupCallback(getBaseContext(), true));
         if (isValid){
-            return  true;
+            if (verificaEditIbge()){
+                   return  true;
+            }else {
+                EditIbge.setError("O campo IBGE não pode ser vazio");
+            }
         }
 
 

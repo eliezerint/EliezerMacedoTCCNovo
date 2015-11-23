@@ -27,6 +27,8 @@ import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
 import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterCidade;
+import br.grupointegrado.appmetaforadevenda.Listagem.AdapterSpinnerEstado;
+import br.grupointegrado.appmetaforadevenda.Listagem.AdapterSpinnerPais;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Pais;
@@ -133,7 +135,7 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
 
         lista_pais = paisdao.list();
 
-        pais_adapter = new ArrayAdapter<Pais>(this, android.R.layout.simple_list_item_1, lista_pais);
+        pais_adapter = new AdapterSpinnerPais(this, lista_pais);
 
 
         MaterialSpinnerPais.setAdapter(pais_adapter);
@@ -149,10 +151,6 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
 
 
         consultaestado();
-
-
-
-
         MaterialSpinnerEstado.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -167,6 +165,7 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
             cadastrarPais();
             cadastrarEstado();
         }
+
 
 
         Consultacidade();
@@ -361,7 +360,7 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
     public void cadastrarPais(){
 
         paisdao.savePais("BR", "Brasil");
-        paisdao.savePais("UY","Uruguai");
+      //  paisdao.savePais("UY","Uruguai");
         paisdao.savePais("AR","Argetina");
         paisdao.savePais("PY","Paraguay");
 
@@ -396,9 +395,55 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
         estadodao.saveEstado("SE", "Sergipe","BR");
         estadodao.saveEstado("TO", "Tocantins","BR");
 
-        estadodao.saveEstado("GA", "Guaira ","PY");
+        //Paraguai
+
+        estadodao.saveEstado("APY", "Alto Paraguay ","PY");
+        estadodao.saveEstado("APA", "Alto Paraná ","PY");
+        estadodao.saveEstado("AMY", "Amambay ","PY");
+        estadodao.saveEstado("BOQ", "Boquerón ","PY");
+        estadodao.saveEstado("CAG", "Caaguazú ","PY");
+        estadodao.saveEstado("CAZ", "Caazapá ","PY");
+        estadodao.saveEstado("CAN", "Canindeyú ","PY");
+        estadodao.saveEstado("CE", "Central ","PY");
+        estadodao.saveEstado("COP", "Concepción ","PY");
+        estadodao.saveEstado("COR", " Cordillera ","PY");
+        estadodao.saveEstado("GA", "Guairá ","PY");
+        estadodao.saveEstado("IT", "Itapúa ","PY");
+        estadodao.saveEstado("MI", "Misiones ","PY");
+        estadodao.saveEstado("NE", "Ñeembucú ","PY");
+        estadodao.saveEstado("PAG", "Paraguarí ","PY");
+        estadodao.saveEstado("PEH", "Presidente Hayes ","PY");
+        estadodao.saveEstado("SAP", "San Pedro ","PY");
+        estadodao.saveEstado("ASU", "Asunción ","PY");
+
+         //Argentina
         estadodao.saveEstado("BU", "Buenos Aires","AR");
-        estadodao.saveEstado("MO", "Montevidéu","UY");
+        estadodao.saveEstado("CA", "Catamarca","AR");
+        estadodao.saveEstado("CH", "Chaco","AR");
+        estadodao.saveEstado("CHU", "Chubut","AR");
+        estadodao.saveEstado("COD", " Córdoba","AR");
+        estadodao.saveEstado("COR", " Corrientes","AR");
+        estadodao.saveEstado("ER", " Entre Ríos","AR");
+        estadodao.saveEstado("FOR", " Formosa","AR");
+        estadodao.saveEstado("JU", " Jujuy","AR");
+        estadodao.saveEstado("LP", " La Pampa","AR");
+        estadodao.saveEstado("LP", " La Pampa","AR");
+        estadodao.saveEstado("LR", " La Rioja","AR");
+        estadodao.saveEstado("ME", " Mendoza","AR");
+        estadodao.saveEstado("MI", " Misiones","AR");
+        estadodao.saveEstado("NE", " Neuquén","AR");
+        estadodao.saveEstado("RN", " Río Negro","AR");
+        estadodao.saveEstado("SA", " Salta","AR");
+        estadodao.saveEstado("SJ", " San Juan","AR");
+        estadodao.saveEstado("SL", " San Luis","AR");
+        estadodao.saveEstado("SC", " Santa Cruz","AR");
+        estadodao.saveEstado("SF", " Santa Fé","AR");
+        estadodao.saveEstado("SAE", " Santiago del Estero","AR");
+        estadodao.saveEstado("TF", "  Terra do Fogo","AR");
+        estadodao.saveEstado("TU", "  Tucumán ","AR");
+
+        // Uruguai
+        //estadodao.saveEstado("MO", "Montevidéu","UY");
 
 
     }
@@ -416,12 +461,9 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
         }
 
 
-        estado_adapter = new ArrayAdapter<Estado>(this, android.R.layout.simple_list_item_1, lista_estado);
-
+        estado_adapter = new AdapterSpinnerEstado(this, lista_estado);
 
         MaterialSpinnerEstado.setAdapter(estado_adapter);
-
-
 
         estado_adapter.notifyDataSetChanged();
 

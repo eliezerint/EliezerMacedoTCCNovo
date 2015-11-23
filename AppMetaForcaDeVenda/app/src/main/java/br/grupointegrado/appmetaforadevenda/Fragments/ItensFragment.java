@@ -197,7 +197,7 @@ public class ItensFragment extends Fragment implements FragmentTab {
                 posicaoRemoveNaEdicao = null;
 
             }
-        
+
     }
 
     public ItensPedido getTItens(Integer idpedido, Integer idpessoa,Integer idvendedor, Integer x) {

@@ -40,14 +40,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                >
 
 
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 
                     android:id="@+id/SpinnerPais"
-                    android:layout_width="170dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="País"
                     app:met_baseColor="@color/colorPrimary"
@@ -59,7 +59,7 @@
 
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/SpinnerEstado"
-                    android:layout_width="160dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Estado"
                     app:met_baseColor="@color/colorPrimary"
