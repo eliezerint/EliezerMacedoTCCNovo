@@ -16,6 +16,8 @@ import br.grupointegrado.appmetaforadevenda.Extras.SlidingTabLayout;
 import br.grupointegrado.appmetaforadevenda.Fragments.ItensFragment;
 import br.grupointegrado.appmetaforadevenda.Fragments.PedidoFragment;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterTabsViewPedido;
+import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
+import br.grupointegrado.appmetaforadevenda.Pedido.Pedido;
 import br.grupointegrado.appmetaforadevenda.R;
 
 
@@ -74,20 +76,28 @@ public class CadastroPedidoActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                if (fragItens.somaitens != null){
+                if (fragItens.somaitens > 0){
                     fragPedido.edit_valor_Total.setText(String.format(Locale.US, "%.2f",fragItens.somaitens));
+                }else {
+                    fragPedido.edit_valor_Total.setText("0.00");
                 }
             }
 
             @Override
             public void onPageSelected(int position) {
-                // navigationDrawerLeft.setSelection(position);
+                fragPedido.edit_valor_Total.setText(fragItens.somaitens.toString());
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
+
+
+
+
+
+
         mSlidingTabLayout.setViewPager(mViewPager);
         //mSlidingTabLayout.setHorizontalFadingEdgeEnabled(true);
         //mSlidingTabLayout.setHorizontalScrollBarEnabled(true);
@@ -121,24 +131,28 @@ public class CadastroPedidoActivity extends AppCompatActivity {
                 fragItens = (ItensFragment) tabsAdapter.getFragments()[1];
 
                 if (fragPedido.Validate() == true) {
-                    if (fragPedido.ispedidoAlt() == false) {
-                        try {
 
+                    if (fragPedido.ispedidoAlt() == false) {
+
+                        try {
                             int idpedido = pedidodao.CosultaPedido();
                             pedidodao.savePedido(fragPedido.getPedido(), idpedido);
 
 
                             int tamanho = fragItens.tamanhoLista();
-                            System.out.print(tamanho + "lista");
-
-                              idItens = pedidodao.CosultaPedido();
-                                if (tamanho > 0) {
+                          if (tamanho > 0) {
                                     for (int x = 0; x < tamanho; x++) {
+
+
                                         try {
-                                        pedidodao.saveItensPedido(fragItens.getTItens(idItens,idpedido,
+
+                                        pedidodao.saveItensPedido(fragItens.getTItens(idpedido,
                                                 fragPedido.getPedido().getIdpessoa(),
                                                 fragPedido.getPedido().getIdvendedor(), x));
-                                            idItens++;
+
+                                     /*   System.out.println(fragItens.getTItens(idpedido,
+                                                fragPedido.getPedido().getIdpessoa(),
+                                                fragPedido.getPedido().getIdvendedor(), x)+"lista");*/
 
                                     }catch(Exception e){
                                         Toast.makeText(this, "" + e, Toast.LENGTH_SHORT).show();
@@ -161,21 +175,39 @@ public class CadastroPedidoActivity extends AppCompatActivity {
                             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        //alterar
+
                         try {
 
 
-                            int idpedido = pedidodao.CosultaPedido();
+                            fragPedido.edit_valor_Total.setText(fragItens.somaitens.toString());
+
+
                             pedidodao.Update(fragPedido.getPedido());
 
                             int tamanho = fragItens.tamanhoLista();
 
-                            idItens = pedidodao.CosultaPedido();
+
+                            ItensPedido itens;
+
                             if (tamanho > 0) {
+                                try {
+                                    pedidodao.deleteItens(fragPedido.getPedido());
+                                }catch (Exception e) {
+                                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                }
                                 for (int x = 0; x < tamanho; x++) {
-                                    pedidodao.saveItensPedido(fragItens.getTItens(idItens,idpedido,
-                                            fragPedido.getPedido().getIdpessoa(),
-                                            fragPedido.getPedido().getIdvendedor(), x));
-                                     idItens++;
+
+                                  try {
+                                      itens = fragItens.getTItens(fragPedido.getPedido().getIdpedido(),
+                                              fragPedido.getPedido().getIdpessoa(),
+                                              fragPedido.getPedido().getIdvendedor(), x);
+
+                                      pedidodao.saveItensPedido(itens);
+                                  }catch (Exception e) {
+                                      Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+                                  }
+
                                 }
 
                             }

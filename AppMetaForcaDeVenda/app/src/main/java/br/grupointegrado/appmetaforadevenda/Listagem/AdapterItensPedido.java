@@ -36,9 +36,9 @@ public class AdapterItensPedido extends AbstractAdapter<AdapterItensPedido.ViewH
     public void onBindViewHolder(ViewHolder holder, int position, ItensPedido item) {
         holder.tv_nomeproduto.setText(item.getNomeproduto());
         holder.tv_quantidade.setText(item.getQuantidade().toString());
-        holder.tv_vlunitario.setText(" X  "+item.getVlunitario().toString());
-        holder.tv_desconto.setText(" - " +item.getDesconto().toString());
-        holder.tv_valortotal.setText(" R$  "+item.getTotal().toString());
+        holder.tv_vlunitario.setText(item.getVlunitario().toString());
+        holder.tv_desconto.setText(item.getDesconto().toString());
+        holder.tv_valortotal.setText(item.getTotal().toString());
 
     }
 

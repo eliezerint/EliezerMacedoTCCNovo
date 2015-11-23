@@ -8,6 +8,7 @@ public class Tabelapreco {
     private Integer idTabelapreco;
     private Integer idProduto;
     private String descricao;
+    private String descricaoiten;
 
     public Tabelapreco() {
 
@@ -15,6 +16,14 @@ public class Tabelapreco {
 
     public Integer getIdTabelapreco() {
         return idTabelapreco;
+    }
+
+    public String getDescricaoiten() {
+        return descricaoiten;
+    }
+
+    public void setDescricaoiten(String descricaoiten) {
+        this.descricaoiten = descricaoiten;
     }
 
     public void setIdTabelapreco(Integer idTabelapreco) {

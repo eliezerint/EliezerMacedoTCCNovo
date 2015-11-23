@@ -6,19 +6,25 @@ package br.grupointegrado.appmetaforadevenda.Produtos;
  */
 public class Grupos_Produtos {
 
-    Integer Idproduto;
-    String Descricao;
+    private Integer Idproduto;
+    private String Descricao;
+    private Integer IdgrupoProduto;
 
     public Grupos_Produtos(Integer idproduto, String descricao) {
         Idproduto = idproduto;
         Descricao = descricao;
     }
 
-    public Grupos_Produtos(String descricao) {
-        Descricao = descricao;
-    }
 
     public Grupos_Produtos() {
+    }
+
+    public Integer getIdgrupoProduto() {
+        return IdgrupoProduto;
+    }
+
+    public void setIdgrupoProduto(Integer idgrupoProduto) {
+        IdgrupoProduto = idgrupoProduto;
     }
 
     public Integer getIdproduto() {
@@ -36,4 +42,11 @@ public class Grupos_Produtos {
     public void setDescricao(String descricao) {
         Descricao = descricao;
     }
+
+    @Override
+    public String toString() {
+        return  this.Descricao;
+    }
 }
+
+

@@ -1,7 +1,6 @@
 package br.grupointegrado.appmetaforadevenda.TelaConsulta;
 
 
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Filter;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -30,14 +31,17 @@ import java.util.Locale;
 import br.grupointegrado.appmetaforadevenda.Dao.PedidoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.ProdutoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.VendedorDao;
+import br.grupointegrado.appmetaforadevenda.Fragments.ItensFragment;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterProduto;
 import br.grupointegrado.appmetaforadevenda.MainActivity;
 import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
+import br.grupointegrado.appmetaforadevenda.Produtos.Grupos_Produtos;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
 import br.grupointegrado.appmetaforadevenda.Produtos.TabelaItenPreco;
 import br.grupointegrado.appmetaforadevenda.Produtos.Tabelapreco;
 import br.grupointegrado.appmetaforadevenda.R;
 import br.grupointegrado.appmetaforadevenda.Vendedor.Vendedor;
+import eu.inmite.android.lib.validations.form.annotations.Length;
 
 public class ConsultaProdutoActivity extends AppCompatActivity {
 
@@ -53,6 +57,7 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
     private MaterialEditText edit_dialogvalorTotalcomDesconto;
     private MaterialBetterSpinner spinnerTp_tabela;
     private MaterialBetterSpinner spinnerTabela_preco;
+    private AutoCompleteTextView autocomplete;
 
     private Toolbar atoolbar;
     private AdapterProduto adapterproduto;
@@ -80,6 +85,11 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
     private List<Vendedor> listaVendedor;
     private ItensPedido editandoProduto ;
     private List<Produtos> listaproduto;
+    private List<Grupos_Produtos>  listaGrupos;
+    private ArrayAdapter<Grupos_Produtos> grupo_adapter;
+    private String conteudoGrupoProduto;
+    private Tabelapreco alttabelapreco;
+    private ArrayList<Integer> listaDeProdutos;
 
 
     @Override
@@ -96,12 +106,17 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         produtodao = new ProdutoDao(this);
         vendedordao = new VendedorDao(this);
 
+        autocomplete = (AutoCompleteTextView) findViewById(R.id.autocompleteproduto);
+
         final ItensPedido itenpedido = new ItensPedido();
+
+        final ItensFragment frag = new ItensFragment();
 
       recyclerviewProdutos = (RecyclerView) findViewById(R.id.RecyviewProduto);
 
         if (getIntent().getExtras() != null) {
-            selecionandoProduto = getIntent().getExtras().getBoolean("selecionando_produto", false);
+           listaDeProdutos = getIntent().getIntegerArrayListExtra("selecionando_produto");
+            selecionandoProduto = true;
 
         }
 
@@ -120,9 +135,23 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
 
                 if (selecionandoProduto) {
+                   Integer id = 0;
+                    if (listaDeProdutos != null) {
+                        for (int x = 0; x < listaDeProdutos.size(); x++) {
+                            if (listaDeProdutos.get(x) == produto.getIdproduto()) {
+                                id = produto.getIdproduto();
 
-                    idproduto = produto.getIdproduto();
-                    insertItens(produto, itenpedido);
+                            }
+                        }
+                    }
+
+                    if (id != produto.getIdproduto()){
+
+                       idproduto = produto.getIdproduto();
+                        insertItens(produto,itenpedido);
+                    }else {
+                        Toast.makeText(this.mContext,"Produto já foi adicionado no pedido",Toast.LENGTH_SHORT).show();
+                    }
 
 
                 }
@@ -144,6 +173,29 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         recyclerviewProdutos.setAdapter(adapterproduto);
 
         consultaProduto();
+
+        listaGrupos = produtodao.listGrupos();
+
+
+        grupo_adapter = new ArrayAdapter<Grupos_Produtos>(this, android.R.layout.simple_list_item_1, listaGrupos);
+
+        autocomplete.setAdapter(grupo_adapter);
+
+
+
+
+        autocomplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Filter filter = grupo_adapter.getFilter();
+                filter = null;
+                conteudoGrupoProduto = autocomplete.getText().toString();
+                consultaProduto();
+
+            }
+        });
+
+
 
         getDadosSearch(this.getIntent());
 
@@ -177,10 +229,13 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
 
-                        if(Validate()) {
+                        if(Validate()&& !edit_quantidade.getText().toString().isEmpty() &&
+                                !edit_valorTotal.getText().toString().isEmpty()) {
                             if (Double.parseDouble(edit_dialogvalorTotalcomDesconto.getText().toString()) > 0){
                                 edit_valorTotal.setText(edit_dialogvalorTotalcomDesconto.getText().toString());
                             }
+
+
                             itenpedido.setIdProduto(produto.getIdproduto());
                             itenpedido.setNomeproduto(produto.getDescricao());
 
@@ -195,9 +250,10 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
                             idproduto = 0;
 
+
                             dialog.dismiss();
 
-                        }
+                        }edit_quantidade.setError("Campo não pode ser Vazio");
 
                     }
 
@@ -205,7 +261,14 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
                     public void onNegative(MaterialDialog dialog) {
 
                         idproduto = 0;
-                        dialog.dismiss();
+                        if (editandoProduto != null){
+                            finish();
+                            dialog.dismiss();
+
+                        }else {
+                            dialog.dismiss();
+                        }
+
 
                     }
 
@@ -231,12 +294,28 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
         spinnerTp_tabela.setAdapter(tptabela_adapter);
 
-        if (listTpTabela != null ){
+        if (listTpTabela != null && editandoProduto == null){
             spinnerTp_tabela.setText(listTpTabela.get(0).getDescricao());
+
             consultaTabelaPreco(listTpTabela.get(0).getIdTabelapreco(), 0);
-            if (editandoProduto != null){
-                editandoItens(editandoProduto,dialog);
-            }
+
+        }else if (editandoProduto != null){
+
+                alttabelapreco = produtodao.descricaoPrecoVendaEditando(idproduto.toString(), editandoProduto.getVlunitario());
+
+                spinnerTp_tabela.setText(alttabelapreco.getDescricao());
+
+                consultaTabelaPreco(alttabelapreco.getIdTabelapreco(),0);
+
+                spinnerTabela_preco.setText(alttabelapreco.getDescricaoiten());
+
+                edit_vlunitario.setText(editandoProduto.getVlunitario().toString());
+               editandoItens(editandoProduto, dialog);
+
+
+
+
+
         }
 
 
@@ -279,15 +358,15 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         edit_quantidade.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                 if (!hasFocus) {
                     if (edit_quantidade.getText().toString().isEmpty()) {
                         edit_quantidade.setError("quantidade não pode ser vazio");
                     } else if (edit_quantidade.getText().toString().equals("0")) {
                         edit_quantidade.setError("no minimo 1 produto");
-                    }else{
+                    } else {
                         somaQuantidade();
                     }
-
+                }
 
             }
         });
@@ -322,7 +401,7 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
     private void editandoItens(ItensPedido itens, MaterialDialog dialog) {
         edit_quantidade.setText(itens.getQuantidade().toString());
-        edit_descontopercentual.setText(itens.getQuantidade().toString());
+        edit_descontopercentual.setText(itens.getDesconto().toString());
         somaQuantidade();
         calculeDescontoPerc(dialog);
         somaQuantidade();
@@ -520,7 +599,10 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.ConsultaProduto:
+                autocomplete.setText("");
+                conteudoGrupoProduto = null;
                 consultaProduto();
+
                 break;
 
         }
@@ -531,10 +613,35 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
     private void consultaProduto() {
 
-        adapterproduto.setItems(produtodao.list());
-        adapterproduto.notifyDataSetChanged();
+
+        if (conteudoSearch != null) {
+            if (soExisteNumero(conteudoSearch)) {
+
+                adapterproduto.setItems(produtodao.listIdproduto(conteudoSearch));
+
+                adapterproduto.notifyDataSetChanged();
+
+            } else {
+                adapterproduto.setItems(produtodao.listNomeProduto(conteudoSearch));
+
+                adapterproduto.notifyDataSetChanged();
+            }
+        } else if (conteudoGrupoProduto != null){
+            adapterproduto.setItems(produtodao.listProdutoGrupo(conteudoGrupoProduto));
+            adapterproduto.notifyDataSetChanged();
+
+
+
+        }else {
+            adapterproduto.setItems(produtodao.list());
+            adapterproduto.notifyDataSetChanged();
+        }
+
 
     }
+
+
+
 
     public void consultaTabelaPreco(Integer idtabelapreco, Integer  position){
 
@@ -588,15 +695,16 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
                 adapterproduto.notifyDataSetChanged();
             }
-        }
-        else {
+        } else if (conteudoGrupoProduto != null) {
+            adapterproduto.setItems(produtodao.listProdutoGrupo(conteudoGrupoProduto));
+            adapterproduto.notifyDataSetChanged();
 
+
+        } else {
             adapterproduto.setItems(produtodao.list());
-
             adapterproduto.notifyDataSetChanged();
         }
-
-        }
+    }
 
 
 
@@ -604,7 +712,7 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         if (edit_quantidade.getText().toString().isEmpty()) {
             edit_quantidade.setError("quantidade não pode ser vazia");
 
-        }else if (edit_descontovalor.getText().toString().isEmpty()){
+        }else if (edit_descontovalor.getText().toString().isEmpty() && !edit_quantidade.getText().toString().isEmpty( )){
             edit_descontovalor.setText("0");
             edit_descontopercentual.setText("0");
             edit_dialogvalorTotalcomDesconto.setText("0");

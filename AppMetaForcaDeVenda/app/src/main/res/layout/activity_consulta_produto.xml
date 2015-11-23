@@ -25,6 +25,16 @@
         android:padding="16dp"
         android:orientation="vertical">
 
+        <AutoCompleteTextView
+            android:id="@+id/autocompleteproduto"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Grupo de Produto"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            />
+
+
 
         <TextView
             android:layout_width="match_parent"

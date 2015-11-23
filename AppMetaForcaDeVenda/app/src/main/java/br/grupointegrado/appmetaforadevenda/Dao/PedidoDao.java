@@ -47,16 +47,13 @@ public class PedidoDao extends AppDao {
 
     public void Update(Pedido pedido) {
         ContentValues cv = new ContentValues();
-        cv.put("idPedido", pedido.getIdpedido());
-        cv.put("idPessoa", pedido.getIdpessoa());
-        cv.put("idVendedor", pedido.getIdvendedor());
         cv.put("idcondicaopagamento", pedido.getIdCondicaopag());
         cv.put("idFilial", pedido.getIdfilial());
         cv.put("Data_pedido", ConvesorUtil.dateParaString(pedido.getDatapedido()));
-        cv.put("Valor_total",pedido.getTotal());
+        cv.put("Valor_total", pedido.getTotal());
 
 
-        getWritableDatabase().update("Pedido", cv, "idPedido = ? and idPessoa = ?",
+        getWritableDatabase().update("Pedido", cv, "idPedido = ? and idPessoa = ? and idVendedor = ? ",
                 new String[]{pedido.getIdpedido().toString(), pedido.getIdpessoa().toString(),
                         pedido.getIdvendedor().toString()});
 
@@ -70,10 +67,11 @@ public class PedidoDao extends AppDao {
     }
 
     public List<Pedido> list() {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido," +
-                "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido," +
-                "   p.Data_pedido , p.Valor_total " +
-                "   From Pedido p, Pessoa pe", null);
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
+                "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido, " +
+                "p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa)", null);
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -102,10 +100,11 @@ public class PedidoDao extends AppDao {
     }
 
     public List<Pedido> listCpfCnpj(String CpfCnpj) {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,"
-                + "  p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido," +
-                "    p.Data_pedido , p.Valor_total "+
-                "    From Pedido p ,Pessoa pe where p.idPessoa = pe.idPessoa and pe.CNPJCPF = ?", new String[]{CpfCnpj});
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
+                "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido," +
+                "p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa)and  pe.CNPJCPF = ?", new String[]{CpfCnpj});
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -133,10 +132,11 @@ public class PedidoDao extends AppDao {
 
     }
     public List<Pedido> list(String nome) {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,"
-                + "  p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido," +
-                "    p.Data_pedido , p.Valor_total "+
-                "    From Pedido p, Pessoa pe where p.idPessoa = pe.idPessoa and pe.Razao_socialNome like ?", new String[]{"%"+nome+"%"});
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
+                "  p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido, " +
+                "  p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) and pe.Razao_socialNome like ?", new String[]{"%"+nome+"%"});
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -188,15 +188,17 @@ public class PedidoDao extends AppDao {
 
     }
 
+
+
+
     //insercao e consulta do Pedido
 
     public void saveItensPedido(ItensPedido itenspedido) {
         ContentValues cv = new ContentValues();
-        cv.put("idItens", itenspedido.getIdItens());
-        cv.put("idProduto", itenspedido.getIdProduto());
         cv.put("idPedido", itenspedido.getIdpedido());
         cv.put("idVendedor", itenspedido.getIdvendedor());
         cv.put("idPessoa", itenspedido.getIdpessoa());
+        cv.put("idProduto", itenspedido.getIdProduto());
         cv.put("Desconto", (itenspedido.getDesconto()));
         cv.put("Quantidade",itenspedido.getQuantidade());
         cv.put("vl_unitario", itenspedido.getVlunitario());
@@ -208,8 +210,33 @@ public class PedidoDao extends AppDao {
 
     }
 
+    public void updateItensPedido(ItensPedido itenspedido) {
+        ContentValues cv = new ContentValues();
+        cv.put("idProduto", itenspedido.getIdProduto());
+        cv.put("Desconto", (itenspedido.getDesconto()));
+        cv.put("Quantidade",itenspedido.getQuantidade());
+        cv.put("vl_unitario", itenspedido.getVlunitario());
+
+
+
+
+        getWritableDatabase().update("ItensPedido", cv, " idItens = ? and idPedido = ? and idPessoa = ? and idVendedor = ? ",
+                new String[]{itenspedido.getIdpedido().toString(), itenspedido.getIdpessoa().toString(),
+                        itenspedido.getIdvendedor().toString()});
+
+    }
+
+
+
+    public void deleteItens(Pedido pedido) {
+
+        getWritableDatabase().delete("ItensPedido", "idPedido = ?  and idVendedor = ? and idPessoa = ?",
+                new String[]{pedido.getIdpedido().toString(), pedido.getIdvendedor().toString()
+                        , pedido.getIdpessoa().toString()});
+    }
+
     public List<ItensPedido> listitens(String idpedido,String idVendedor,String idpessoa) {
-        Cursor c = getReadableDatabase().rawQuery("select i.idItens, i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
+        Cursor c = getReadableDatabase().rawQuery("select  i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
                 "      i.Quantidade, i.vl_unitario, ((i.vl_unitario-(i.vl_unitario*i.desconto/100)) * i.Quantidade)as total" +
                 "       from ItensPedido i, Produto p" +
                 "        where i.idPedido = ? and i.idVendedor = ? and i.idPessoa = ? and p.idProduto = i.idProduto", new String[]{idpedido,idVendedor,idpessoa});
@@ -220,16 +247,15 @@ public class PedidoDao extends AppDao {
         while (c.moveToNext()) {
 
             ItensPedido iten = new ItensPedido();
-            iten.setIdItens(c.getInt(0));
-            iten.setIdpedido(c.getInt(1));
-            iten.setIdProduto(c.getInt(2));
-            iten.setNomeproduto(c.getString(3));
-            iten.setIdpessoa(c.getInt(4));
-            iten.setIdvendedor(c.getInt(5));
-            iten.setDesconto(c.getDouble(6));
-            iten.setQuantidade(c.getDouble(7));
-            iten.setVlunitario(c.getDouble(8));
-            iten.setTotal(c.getDouble(9));
+            iten.setIdpedido(c.getInt(0));
+            iten.setIdProduto(c.getInt(1));
+            iten.setNomeproduto(c.getString(2));
+            iten.setIdpessoa(c.getInt(3));
+            iten.setIdvendedor(c.getInt(4));
+            iten.setDesconto(c.getDouble(5));
+            iten.setQuantidade(c.getDouble(6));
+            iten.setVlunitario(c.getDouble(7));
+            iten.setTotal(c.getDouble(8));
 
 
             itens.add(iten);
@@ -241,9 +267,11 @@ public class PedidoDao extends AppDao {
 
     }
 
-    public Integer CosultaItensPedido(){
-        Cursor consulta = getReadableDatabase().rawQuery("Select COALESCE(Max(idItens),0) + 1 AS MAX from ItensPedido ",
-                null);
+
+
+    public Integer exitePedidoDoCliente(String idcliente){
+        Cursor consulta = getReadableDatabase().rawQuery("select idPessoa from Pedido " +
+                        "where idPessoa = ? ", new String[]{idcliente});
         Integer id = 0;
 
         if (consulta != null) {

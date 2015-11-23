@@ -69,6 +69,7 @@ public class VendedorDao extends AppDao {
         c.close();
         return vendedores;
     }
+
     public List<Vendedor> listNome(String nome) {
         Cursor c = getReadableDatabase().rawQuery("Select idVendedor, nome, Max_Desconto from Vendedor where nome like ?",new String[]{"%"+nome+"%"});
 

@@ -7,7 +7,6 @@ import java.io.Serializable;
  */
 public class ItensPedido implements Serializable{
 
-    private Integer idItens;
     private Integer idpedido;
     private Integer idpessoa;
     private Integer idvendedor;
@@ -38,8 +37,7 @@ public class ItensPedido implements Serializable{
         this.total = total;
         this.totalCdesconto = totalCdesconto;
     }
-    public ItensPedido(Integer idItens,Integer idpedido,Integer idpessoa,Integer idvendedor,Integer idProduto,  Double desconto, Double quantidade, Double vlunitario) {
-        this.idItens    = idItens;
+    public ItensPedido(Integer idpedido,Integer idpessoa,Integer idvendedor,Integer idProduto,  Double desconto, Double quantidade, Double vlunitario) {
         this.idpedido   = idpedido;
         this.idpessoa   = idpessoa;
         this.idvendedor = idvendedor;
@@ -62,13 +60,6 @@ public class ItensPedido implements Serializable{
         this.nomeproduto = nomeproduto;
     }
 
-    public Integer getIdItens() {
-        return idItens;
-    }
-
-    public void setIdItens(Integer idItens) {
-        this.idItens = idItens;
-    }
 
     public Integer getIdpessoa() {
         return idpessoa;

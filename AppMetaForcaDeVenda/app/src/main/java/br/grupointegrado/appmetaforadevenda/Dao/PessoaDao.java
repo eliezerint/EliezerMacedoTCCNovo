@@ -133,12 +133,12 @@ public class PessoaDao extends AppDao {
     }
 
     public List<Pessoa> list() {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
-                "p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep" +
-                ", p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido , " +
-                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
-                "inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
-                "where t.Numero = (select Numero from Telefone)", null);
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa, p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ," +
+                "t.Numero as telefone, p.Bairro , p.cep  , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email ," +
+                " p.Razao_socialNome , p.Nome_fantasiaApelido , p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra " +
+                "From Pessoa p ,Telefone t " +
+                "where p.idPessoa = t.idPessoa " +
+                "group by p.idPessoa ", null);
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -172,13 +172,13 @@ public class PessoaDao extends AppDao {
         return pessoas;
     }
     public List<Pessoa> list(String nome) {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
-                " p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep " +
-                " , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
-                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
-                " inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
-                " where t.Numero = (select Numero from Telefone)  " +
-                " and p.Razao_socialNome like ?" , new String[]{"%"+nome+"%"});
+        Cursor c = getReadableDatabase().rawQuery("Select p.idPessoa, p.id_Cidade, p.CNPJCPF, p.Endereco, p.Numero, t.Numero as telefone," +
+                " p.Bairro, p.cep, p.Data_Nascimento, p.Data_Cadastro, p.Complemento, p.Email, p.Razao_socialNome, " +
+                " p.Nome_fantasiaApelido, p.inscriEstadualRG, p.Data_ultima_compra, p.Valor_ultima_compra  " +
+                " From Pessoa p ,Telefone t " +
+                " where p.idPessoa = t.idPessoa " +
+                " group by p.idPessoa " +
+                " HAVING p.Razao_socialNome like ?" , new String[]{"%"+nome+"%"});
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -213,14 +213,14 @@ public class PessoaDao extends AppDao {
         return pessoas;
     }
     public List<Pessoa> listCidade(String cidade) {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
-                " p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep " +
-                " , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
-                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
-                " inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
-                " inner JOIN Cidade c on (p.id_Cidade = c.id_Cidade)" +
-                " where t.Numero = (select Numero from Telefone)" +
-                " and c.descricao = ?", new String[]{cidade});
+        Cursor c = getReadableDatabase().rawQuery("Select p.idPessoa, p.id_Cidade, p.CNPJCPF, p.Endereco, p.Numero, t.Numero as telefone," +
+                " p.Bairro, p.cep, p.Data_Nascimento, p.Data_Cadastro, p.Complemento, p.Email, p.Razao_socialNome, p.Nome_fantasiaApelido," +
+                " p.inscriEstadualRG, p.Data_ultima_compra, p.Valor_ultima_compra  \n" +
+                " From Pessoa p ,Telefone t " +
+                " inner join Cidade c on (c.id_Cidade = p.id_Cidade) " +
+                " where p.idPessoa = t.idPessoa  " +
+                " group by p.idPessoa " +
+                " HAVING c.descricao = ?", new String[]{cidade});
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -257,13 +257,13 @@ public class PessoaDao extends AppDao {
     }
 
     public List<Pessoa> listCpfCnpj(String cpfCnpj) {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa," +
-                " p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep " +
-                " , p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
-                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  From Pessoa p " +
-                " inner JOIN Telefone t on (p.idPessoa = t.idPessoa)" +
-                " where t.Numero = (select Numero from Telefone)  " +
-                " and p.CNPJCPF = ?" , new String[]{cpfCnpj});
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa, p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep  ," +
+                " p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
+                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  " +
+                "From Pessoa p ,Telefone t " +
+                "where p.idPessoa = t.idPessoa " +
+                "group by p.idPessoa " +
+                "HAVING  p.CNPJCPF = ?" , new String[]{cpfCnpj});
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -297,7 +297,7 @@ public class PessoaDao extends AppDao {
         c.close();
         return pessoas;
     }
-    public void delete(Integer id) {
+     public void delete(Integer id) {
 
         getWritableDatabase().delete("Pessoa", "idPessoa = ?", new String[]{id.toString()});
     }

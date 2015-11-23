@@ -52,6 +52,27 @@ public class FilialDao extends AppDao {
         return filials;
     }
 
+    public List<Filial> listNome(String nome) {
+        Cursor c = getReadableDatabase().rawQuery("Select idFilial, Descricao from Filial" +
+                " where like ?", new String[]{"%"+nome+"%"});
+
+        List<Filial> filials = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Filial filial = new Filial();
+            filial.setIdfilial(c.getInt(0));
+            filial.setDescricao(c.getString(1));
+
+
+            filials.add(filial);
+
+        }
+        c.close();
+        return filials;
+    }
+
     public String nomeFilial(String id){
         Cursor c = getReadableDatabase().rawQuery("Select Descricao from Filial where idFilial = ?",
                 new String[]{id});
@@ -69,6 +90,27 @@ public class FilialDao extends AppDao {
 
 
         return nome;
+    }
+
+    public List<Filial> listaid(String id) {
+        Cursor c = getReadableDatabase().rawQuery("Select idFilial, Descricao from Filial" +
+                " where idFilial = ?", new String[]{id});
+
+        List<Filial> filials = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Filial filial = new Filial();
+            filial.setIdfilial(c.getInt(0));
+            filial.setDescricao(c.getString(1));
+
+
+            filials.add(filial);
+
+        }
+        c.close();
+        return filials;
     }
 
 

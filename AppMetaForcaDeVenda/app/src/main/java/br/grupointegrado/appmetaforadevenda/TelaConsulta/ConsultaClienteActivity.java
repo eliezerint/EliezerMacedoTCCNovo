@@ -28,9 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
+import br.grupointegrado.appmetaforadevenda.Dao.PedidoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PessoaDao;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterCliente;
 
+import br.grupointegrado.appmetaforadevenda.Pedido.Pedido;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Pessoa;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Telefone;
@@ -54,6 +56,7 @@ public class ConsultaClienteActivity extends AppCompatActivity {
     private String CNPJCPF;
 
     private PessoaDao clientedao;
+    private PedidoDao pedidodao;
     private Pessoa pessoa;
     private CidadeDao cidadedao;
 
@@ -82,6 +85,7 @@ public class ConsultaClienteActivity extends AppCompatActivity {
 
         clientedao = new PessoaDao(this);
         cidadedao = new CidadeDao(this);
+        pedidodao = new PedidoDao(this);
 
         if (getIntent().getExtras() != null)
             selecionandoPessoa = getIntent().getExtras().getBoolean("selecionar_pessoa", false);
@@ -246,6 +250,7 @@ public class ConsultaClienteActivity extends AppCompatActivity {
             case R.id.ConsultaCliente:
                 autocomplete.setText("");
                 conteudocidade = null;
+                conteudoSearch = null;
                 Consultacliente();
                 break;
 
@@ -269,13 +274,13 @@ public class ConsultaClienteActivity extends AppCompatActivity {
 
                 adaptercliente.notifyDataSetChanged();
             }
-        } else if (conteudocidade != null){
+           } else if (conteudocidade != null){
             adaptercliente.setItems(clientedao.listCidade(conteudocidade));
             adaptercliente.notifyDataSetChanged();
 
 
 
-        }else {
+          }else {
             adaptercliente.setItems(clientedao.list());
             adaptercliente.notifyDataSetChanged();
         }
@@ -307,7 +312,6 @@ public class ConsultaClienteActivity extends AppCompatActivity {
             adaptercliente.setItems(clientedao.list());
             adaptercliente.notifyDataSetChanged();
         }
-
     }
 
     public void MaterialDialogCidade(final Pessoa pessoa) {
@@ -324,7 +328,14 @@ public class ConsultaClienteActivity extends AppCompatActivity {
                             EditarPessoa(getPessoa(pessoa));
                             dialog.dismiss();
                         } else if (text.equals("Excluir")) {
-                            DeletarCliente();
+                            Integer  idcliente = pedidodao.exitePedidoDoCliente(pessoa.getIdpessoa().toString());
+                            if (idcliente == null) {
+                                DeletarCliente();
+                            } else {
+                                Toast.makeText(dialog.getContext(),"Este Cadastro não pode ser excluido ", Toast.LENGTH_SHORT).show();
+                            }
+
+
                             dialog.dismiss();
                         }
 

@@ -54,6 +54,56 @@ public class CondicaoPgtoDao extends  AppDao {
         return condpgtos;
     }
 
+    public List<CondicaoPagamento> listNome(String nome) {
+        Cursor c = getReadableDatabase().rawQuery("Select idcondicaopagamento, Descricao, " +
+                "Nr_parcelas, Intervalos from Condicao_pagamento where Descricao like ?", new String[]{"%"+nome+"%"});
+
+        List<CondicaoPagamento> condpgtos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            CondicaoPagamento condpgto = new CondicaoPagamento();
+            condpgto.setIdcodicaopagamento(c.getInt(0));
+            condpgto.setDescricao(c.getString(1));
+            condpgto.setQuantidade(c.getDouble(2));
+            condpgto.setIntervalo(c.getInt(3));
+
+
+
+            condpgtos.add(condpgto);
+
+        }
+        c.close();
+        return condpgtos;
+    }
+
+    public List<CondicaoPagamento> listId(String id) {
+        Cursor c = getReadableDatabase().rawQuery("Select idcondicaopagamento, Descricao, " +
+                "Nr_parcelas, Intervalos from Condicao_pagamento where idcondicaopagamento = ?", new String[]{id});
+
+        List<CondicaoPagamento> condpgtos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            CondicaoPagamento condpgto = new CondicaoPagamento();
+            condpgto.setIdcodicaopagamento(c.getInt(0));
+            condpgto.setDescricao(c.getString(1));
+            condpgto.setQuantidade(c.getDouble(2));
+            condpgto.setIntervalo(c.getInt(3));
+
+
+
+            condpgtos.add(condpgto);
+
+        }
+        c.close();
+        return condpgtos;
+    }
+
+
+
     public String nomeCondPgto(String id){
         Cursor c = getReadableDatabase().rawQuery("Select Descricao from Condicao_pagamento where idcondicaopagamento = ?",
                 new String[]{id});

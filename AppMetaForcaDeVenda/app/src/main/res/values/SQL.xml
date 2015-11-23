@@ -170,7 +170,6 @@
 
      <string name="SQL_CREATE_TABELA_ITENS_PEDIDO" >
        CREATE TABLE ItensPedido (
-         idItens INTEGER NOT NULL ,
          idPedido INTEGER NOT NULL,
          idVendedor INTEGER NOT NULL,
          idPessoa INTEGER NOT NULL,
@@ -180,7 +179,7 @@
          vl_unitario DOUBLE (5, 2),
          FOREIGN KEY (idPedido, idVendedor, idPessoa)
          REFERENCES Pedido (idPedido, idVendedor, idPessoa),
-         PRIMARY KEY (idItens, idPedido, idVendedor, idPessoa));
+         PRIMARY KEY (idPedido, idVendedor, idPessoa,idProduto));
    </string>
 
 </resources>

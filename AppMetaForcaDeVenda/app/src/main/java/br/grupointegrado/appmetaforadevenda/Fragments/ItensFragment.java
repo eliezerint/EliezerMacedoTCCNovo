@@ -37,7 +37,7 @@ public class ItensFragment extends Fragment implements FragmentTab {
 
     private FloatingActionButton floatingActionbutton;
     private AdapterItensPedido adapteritenspedido;
-    private List<ItensPedido> listaitens;
+    public List<ItensPedido> listaitens;
 
     private RecyclerView recycleritenspedido;
 
@@ -46,6 +46,8 @@ public class ItensFragment extends Fragment implements FragmentTab {
     private PedidoDao pedidodao;
     private boolean estadodofragment = false;
     private Integer posicaolista;
+    private ArrayList<Integer> listaVerificaProduto;
+    private Integer posicaoRemoveNaEdicao;
 
 
     @Override
@@ -67,11 +69,17 @@ public class ItensFragment extends Fragment implements FragmentTab {
 
         listaitens = new ArrayList<>();
 
+        listaVerificaProduto = new ArrayList<>();
+
         pedidodao = new PedidoDao(getActivity());
 
         floatingActionbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                for (int x = 0 ; x < listaitens.size(); x++){
+                  listaVerificaProduto.add(listaitens.get(x).getIdProduto());
+
+                }
                 addItensPedido();
             }
         });
@@ -121,6 +129,7 @@ public class ItensFragment extends Fragment implements FragmentTab {
 
                  for (int x = 0; x < listaitens.size(); x++) {
                      somaitens += listaitens.get(x).getTotal();
+
                  }
                ConsultaItensPedido();
               estadodofragment = true;
@@ -151,17 +160,18 @@ public class ItensFragment extends Fragment implements FragmentTab {
     }
 
     private static final int REQUEST_ADD_ITENSPEDIDO = 1001;
+    private static final int REQUEST_EDIT_ITENSPEDIDO = 1002;
 
     private void addItensPedido() {
         Intent intent = new Intent(getActivity(), ConsultaProdutoActivity.class);
-        intent.putExtra("selecionando_produto", true);
+        intent.putIntegerArrayListExtra("selecionando_produto", listaVerificaProduto);
         startActivityForResult(intent, REQUEST_ADD_ITENSPEDIDO);
     }
 
     private void editItensPedido(Integer position) {
         Intent intent = new Intent(getActivity(), ConsultaProdutoActivity.class);
         intent.putExtra("editando_produto", listaitens.get(position));
-        startActivityForResult(intent, REQUEST_ADD_ITENSPEDIDO);
+        startActivityForResult(intent, REQUEST_EDIT_ITENSPEDIDO);
     }
 
 
@@ -177,18 +187,25 @@ public class ItensFragment extends Fragment implements FragmentTab {
             listaitens.add(item);
             ConsultaItensPedido(listaitens);
 
-        }
+        }else if (REQUEST_EDIT_ITENSPEDIDO == requestCode && resultCode == getActivity().RESULT_OK) {
+                listaitens.remove(listaitens.get(posicaoRemoveNaEdicao));
+                ItensPedido item = (ItensPedido)data.getSerializableExtra("itens_object");
 
+                Toast.makeText(this.getContext(),item.getIdProduto()+ "", Toast.LENGTH_SHORT).show();
+                listaitens.add(item);
+                ConsultaItensPedido(listaitens);
+                posicaoRemoveNaEdicao = null;
 
+            }
+        
     }
 
-    public ItensPedido getTItens(Integer idItens,Integer idpedido, Integer idpessoa,Integer idvendedor, Integer x) {
-
-        return new ItensPedido(idItens,idpedido,idpessoa,idvendedor,
-                (adapteritenspedido.getItems().get(x).getIdProduto()),
-                adapteritenspedido.getItems().get(x).getDesconto(),
-                adapteritenspedido.getItems().get(x).getQuantidade(),
-                adapteritenspedido.getItems().get(x).getVlunitario());
+    public ItensPedido getTItens(Integer idpedido, Integer idpessoa,Integer idvendedor, Integer x) {
+            return new ItensPedido( idpedido, idpessoa, idvendedor,
+                    (adapteritenspedido.getItems().get(x).getIdProduto()),
+                    adapteritenspedido.getItems().get(x).getDesconto(),
+                    adapteritenspedido.getItems().get(x).getQuantidade(),
+                    adapteritenspedido.getItems().get(x).getVlunitario());
 
 
     }
@@ -203,16 +220,18 @@ public class ItensFragment extends Fragment implements FragmentTab {
 
                         if (text.equals("Editar")) {
 
-                                editItensPedido(posicao);
-
-
+                            editItensPedido(posicao);
+                            posicaoRemoveNaEdicao = posicao;
 
 
                             dialog.dismiss();
                         } else if (text.equals("Excluir")) {
 
+                            somaitens = (somaitens - listaitens.get(posicao).getTotal());
+
                             listaitens.remove(listaitens.get(posicao));
                             ConsultaItensPedido();
+
 
                             dialog.dismiss();
                         }
@@ -246,6 +265,7 @@ public class ItensFragment extends Fragment implements FragmentTab {
         listaitens.clear();
         adapteritenspedido.setItems(listaitens);
         adapteritenspedido.notifyDataSetChanged();
+        somaitens = 0.00;
     }
 
     @Override

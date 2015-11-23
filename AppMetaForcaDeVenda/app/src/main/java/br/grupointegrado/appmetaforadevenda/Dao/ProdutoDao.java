@@ -37,7 +37,7 @@ public class ProdutoDao extends AppDao {
     }
 
     public Produtos cosultaIdproduto(String idproduto) {
-        Cursor c = getReadableDatabase().rawQuery("Select idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao , um.Descricao, " +
+        Cursor c = getReadableDatabase().rawQuery("Select p.idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao , um.Descricao, " +
                 "grp.Descricao from Produto p, UnidadeMedida um , GrupoProduto grp " +
                 "where um.idUnidadeMedida = p.idUnidadeMedida and grp.idGrupo_produto = p.idGrupo_produto" +
                 " and idProduto = ? ", new String[]{idproduto});
@@ -64,6 +64,28 @@ public class ProdutoDao extends AppDao {
         }
 
         return produto;
+
+    }
+
+    public List<Grupos_Produtos> listGrupos() {
+        Cursor c = getReadableDatabase().rawQuery("Select gp.idGrupo_produto, gp.Descricao from GrupoProduto gp" , null);
+
+        List<Grupos_Produtos> grupoprodutos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Grupos_Produtos grupoproduto = new Grupos_Produtos();
+            grupoproduto.setIdgrupoProduto(c.getInt(0));
+            grupoproduto.setDescricao(c.getString(1));
+
+
+
+            grupoprodutos.add(grupoproduto);
+
+        }
+        c.close();
+        return grupoprodutos;
 
     }
 
@@ -96,7 +118,7 @@ public class ProdutoDao extends AppDao {
     }
 
     public List<Produtos> listIdproduto(String idproduto) {
-        Cursor c = getReadableDatabase().rawQuery("Select idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao , um.Descricao, " +
+        Cursor c = getReadableDatabase().rawQuery("Select p.idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao , um.Descricao, " +
                 "grp.Descricao from Produto p, UnidadeMedida um , GrupoProduto grp " +
                 "where um.idUnidadeMedida = p.idUnidadeMedida and grp.idGrupo_produto = p.idGrupo_produto" +
                 " and idProduto = ? ", new String[]{idproduto});
@@ -123,8 +145,8 @@ public class ProdutoDao extends AppDao {
 
     }
     public List<Produtos> listNomeProduto(String nome) {
-        Cursor c = getReadableDatabase().rawQuery("Select idProduto, grp.idGrupo_produto, um.idUnidadeMedida  ,p.Descricao , um.Sigla, " +
-                "grp.Descricao " +
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idProduto, grp.idGrupo_produto, " +
+                "um.idUnidadeMedida  ,p.Descricao , um.Descricao,  grp.Descricao " +
                 "from Produto p, UnidadeMedida um , GrupoProduto grp " +
                 "where um.idUnidadeMedida = p.idUnidadeMedida and grp.idGrupo_produto = p.idGrupo_produto " +
                 "and p.descricao  like ?", new String[]{"%"+nome+"%"});
@@ -150,6 +172,39 @@ public class ProdutoDao extends AppDao {
         return produtos;
 
     }
+
+
+
+    public List<Produtos> listProdutoGrupo(String nome) {
+        Cursor c = getReadableDatabase().rawQuery("select   p.idProduto, gp.idGrupo_produto, " +
+                "    um.idUnidadeMedida  ,p.Descricao , um.Descricao,  gp.Descricao  " +
+                "  from Produto p" +
+                "  inner JOIN GrupoProduto gp on(p.idGrupo_produto = gp.idGrupo_produto) " +
+                "  inner JOIN UnidadeMedida um on(p.idUnidadeMedida = um.idUnidadeMedida) " +
+                "  where gp.Descricao = ?", new String[]{nome});
+
+        List<Produtos> produtos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Produtos produto = new Produtos();
+            produto.setIdproduto(c.getInt(0));
+            produto.setIdgrupopoduto(c.getInt(1));
+            produto.setIdUnidademedida(c.getInt(2));
+            produto.setDescricao(c.getString(3));
+            produto.setDescricaoUnidademedida(c.getString(4));
+            produto.setDescricaoGrupoProduto(c.getString(5));
+
+
+            produtos.add(produto);
+
+        }
+        c.close();
+        return produtos;
+
+    }
+
 
     //Tabela de Grupos de Produto
     public void saveGrupoProduto(String grupos_produtos){
@@ -220,6 +275,61 @@ public class ProdutoDao extends AppDao {
         getWritableDatabase().insert("TabelaPreco", null, cv);
 
     }
+
+
+    public Tabelapreco descricaoPrecoVendaEditando(String id, Double vlunitario) {
+        Cursor c = getReadableDatabase().rawQuery(" Select tb.idTabelapreco, tb.idProduto, tb.descricao ,tbi.descricao"
+                         +  "    from TabelaPreco tb  "
+                         +  "    inner join TabelaItenPreco tbi on (tbi.idTabelapreco = tb.idTabelapreco)"
+                         +  " where  tb.idProduto = ? and tbi.vlunitario  = ?", new String []{id, vlunitario.toString()});
+
+        Tabelapreco tbPreco = new Tabelapreco() ;
+
+        if (c != null) {
+            try {
+                if (c.moveToFirst()) {
+                    tbPreco.setIdTabelapreco(c.getInt(0));
+                    tbPreco.setIdProduto(c.getInt(1));
+                    tbPreco.setDescricao(c.getString(2));
+                    tbPreco.setDescricaoiten(c.getString(3));
+                }
+            } finally {
+                c.close();
+            }
+
+
+
+        }
+
+        return tbPreco;
+
+
+    }
+
+
+
+    public List<Tabelapreco> listPrecoVEnda(Integer id) {
+        Cursor c = getReadableDatabase().rawQuery("Select idTabelapreco, idProduto, descricao" +
+                " from TabelaPreco where  idProduto = ? ", new String []{id.toString()});
+
+        List<Tabelapreco> tabela_precos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Tabelapreco tabela_preco = new Tabelapreco();
+            tabela_preco.setIdTabelapreco(c.getInt(0));
+            tabela_preco.setIdProduto(c.getInt(1));
+            tabela_preco.setDescricao(c.getString(2));
+
+            tabela_precos.add(tabela_preco);
+
+        }
+        c.close();
+        return tabela_precos;
+
+    }
+
 
 
     public List<Tabelapreco> listPrecoVEnda(String id) {
