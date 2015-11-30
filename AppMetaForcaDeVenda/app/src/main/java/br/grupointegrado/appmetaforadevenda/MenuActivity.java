@@ -96,23 +96,6 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-//        tvCadastrarCliente.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(getApplicationContext(), CadastroPessoaActivity.class);
-//
-//                startActivity(i);
-//            }
-//        });
-
-
-//      dao = new AppDao(this); consulta de estado
-//        tvEmpty.setText(dao.validaUsuario("SC"));
-
-
     }
 
     public void DialogsDadosImporExpor() {

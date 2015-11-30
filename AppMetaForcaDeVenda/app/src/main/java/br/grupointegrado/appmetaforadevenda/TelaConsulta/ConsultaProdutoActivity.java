@@ -24,6 +24,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -709,10 +711,9 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
 
     public boolean Validate() {
-        if (edit_quantidade.getText().toString().isEmpty()) {
-            edit_quantidade.setError("quantidade não pode ser vazia");
 
-        }else if (edit_descontovalor.getText().toString().isEmpty() && !edit_quantidade.getText().toString().isEmpty( )){
+         if (edit_descontovalor.getText().toString().isEmpty() && !edit_quantidade.getText().toString().isEmpty( )
+                 && !edit_quantidade.hasFocus()){
             edit_descontovalor.setText("0");
             edit_descontopercentual.setText("0");
             edit_dialogvalorTotalcomDesconto.setText("0");
@@ -725,6 +726,8 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
         return false;
     }
+
+
 
 
 

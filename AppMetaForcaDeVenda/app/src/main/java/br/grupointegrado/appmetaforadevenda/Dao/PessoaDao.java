@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import br.grupointegrado.appmetaforadevenda.Pedido.Pedido;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Pessoa;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Telefone;
 import br.grupointegrado.appmetaforadevenda.Util.ConvesorUtil;
@@ -131,6 +133,22 @@ public class PessoaDao extends AppDao {
 
 
     }
+
+    public void UpdateUltimaCompra(Pedido pedido) {
+
+            ContentValues cv = new ContentValues();
+
+            cv.put("Data_ultima_compra", (dateParaString(pedido.getDatapedido())));
+            cv.put("Valor_ultima_compra", pedido.getTotal());
+
+
+
+            getWritableDatabase().update("Pessoa", cv, "idPessoa = ?", new String[]{pedido.getIdpessoa().toString()});
+
+
+
+    }
+
 
     public List<Pessoa> list() {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa, p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ," +
@@ -297,6 +315,51 @@ public class PessoaDao extends AppDao {
         c.close();
         return pessoas;
     }
+
+    public List<Pessoa> listid(String id) {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPessoa, p.id_Cidade, p.CNPJCPF , p.Endereco , p.Numero ,t.Numero as telefone, p.Bairro , p.cep  ," +
+                " p.Data_Nascimento ,p.Data_Cadastro , p.Complemento , p.Email , p.Razao_socialNome , p.Nome_fantasiaApelido ," +
+                " p.inscriEstadualRG , p.Data_ultima_compra , p.Valor_ultima_compra  " +
+                "From Pessoa p ,Telefone t " +
+                "where p.idPessoa = t.idPessoa " +
+                "group by p.idPessoa " +
+                "HAVING  p.idPessoa = ?" , new String[]{id});
+
+        List<Pessoa> pessoas = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pessoa pessoa = new Pessoa();
+            pessoa.setIdpessoa(c.getInt(0));
+            pessoa.setIdCidade(c.getInt(1));
+            pessoa.setCnpjCpf(c.getString(2));
+            pessoa.setEndereco(c.getString(3));
+            pessoa.setNumero(c.getString(4));
+            pessoa.setTelefone(c.getString(5));
+            pessoa.setBairro(c.getString(6));
+            pessoa.setCep(c.getString(7));
+            pessoa.setDataNascimento(stringParaSQLDate(c.getString(8)));
+            pessoa.setDataCadastro(stringParaSQLDate(c.getString(9)));
+            pessoa.setComplemento(c.getString(10));
+            pessoa.setEmail(c.getString(11));
+            pessoa.setRazaoSocialNome(c.getString(12));
+            pessoa.setFantasiaApelido(c.getString(13));
+            pessoa.setInscriEstadualRG(c.getString(14));
+            pessoa.setDataUltimacompra(stringParaSQLDate(c.getString(15)));
+            pessoa.setValorUltimacompra(c.getDouble(16));
+
+
+
+            pessoas.add(pessoa);
+
+        }
+        c.close();
+        return pessoas;
+    }
+
+
+
      public void delete(Integer id) {
 
         getWritableDatabase().delete("Pessoa", "idPessoa = ?", new String[]{id.toString()});

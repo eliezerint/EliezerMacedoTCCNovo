@@ -76,6 +76,7 @@
     <string name="max_fantasia">O nome fantasia maximo 60 caracteres </string>
     <string name="min_ibge">O campo ibge ter no minimo 7 numeros </string>
     <string name="title_activity_consulta_pedido">ConsultaPedidoActivity</string>
+    <string name="title_activity_consulta_importacao">ConsultaImportacaoActivity</string>
 
 
 

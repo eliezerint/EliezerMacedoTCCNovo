@@ -36,7 +36,7 @@ public class AdapterCondPgto extends AbstractAdapter<AdapterCondPgto.ViewHolder,
     @Override
     public void onBindViewHolder(ViewHolder holder, int position, CondicaoPagamento item) {
         holder.tvCondPgto.setText(item.getDescricao());
-        holder.tvNrParcela.setText(item.getQuantidade().toString());
+        holder.tvNrParcela.setText(String.format("%.0f",item.getQuantidade()));
         holder.tvIntervalo.setText(item.getIntervelo().toString());
         holder.tvCod.setText(item.getIdcodicaopagamento() + "");
     }

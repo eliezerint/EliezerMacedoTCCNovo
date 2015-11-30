@@ -17,7 +17,7 @@ public class Pedido implements Serializable {
     private Date datapedido;
     private Double total;
     private String nome;
-    private String fantasia;
+    private String Cidade;
     private String nomevendedor;
 
     public Pedido() {
@@ -59,12 +59,12 @@ public class Pedido implements Serializable {
         this.nome = nome;
     }
 
-    public String getFantasia() {
-        return fantasia;
+    public String getCidade() {
+        return Cidade;
     }
 
-    public void setFantasia(String fantasia) {
-        this.fantasia = fantasia;
+    public void setCidade(String fantasia) {
+        this.Cidade = fantasia;
     }
 
     public Integer getIdpedido() {

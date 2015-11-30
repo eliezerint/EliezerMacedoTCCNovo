@@ -264,10 +264,17 @@ public class ConsultaClienteActivity extends AppCompatActivity {
         super.onResume();
         if (conteudoSearch != null){
             if (soExisteNumero(conteudoSearch)){
+                if (conteudoSearch.length() > 10){
+                    adaptercliente.setItems(clientedao.listCpfCnpj(conteudoSearch));
 
-                adaptercliente.setItems(clientedao.listCpfCnpj(conteudoSearch));
+                    adaptercliente.notifyDataSetChanged();
+                }else {
+                    adaptercliente.setItems(clientedao.listid(conteudoSearch));
 
-                adaptercliente.notifyDataSetChanged();
+                    adaptercliente.notifyDataSetChanged();
+                }
+
+
 
             }else {
                 adaptercliente.setItems(clientedao.list(conteudoSearch));

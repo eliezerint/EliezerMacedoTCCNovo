@@ -44,6 +44,7 @@ public class ConsultaPedidoActivity extends AppCompatActivity {
     private Integer idpedido;
     private String nomepedido;
     private String conteudoSearch;
+    private Integer numeroVerificaCodigo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,10 +208,17 @@ public class ConsultaPedidoActivity extends AppCompatActivity {
 
         if (conteudoSearch != null){
             if (soExisteNumero(conteudoSearch)){
+                if (conteudoSearch.toString().length() > 10) {
 
-                adapterpedido.setItems(pedidodao.listCpfCnpj(conteudoSearch));
+                    adapterpedido.setItems(pedidodao.listCpfCnpj(conteudoSearch));
 
-                adapterpedido.notifyDataSetChanged();
+                    adapterpedido.notifyDataSetChanged();
+                }else {
+                    adapterpedido.setItems(pedidodao.listCodigo(conteudoSearch));
+
+                    adapterpedido.notifyDataSetChanged();
+
+                }
 
             }else {
                 adapterpedido.setItems(pedidodao.list(conteudoSearch));

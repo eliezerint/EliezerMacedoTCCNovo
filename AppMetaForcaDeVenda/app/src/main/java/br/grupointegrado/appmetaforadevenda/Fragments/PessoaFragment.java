@@ -706,6 +706,19 @@ public class PessoaFragment extends Fragment implements DatePickerDialog.OnDateS
         editEmail.setText(pessoaalt.getEmail());
         editDataCadastro.setText(ConvesorUtil.dateParaString(pessoaalt.getDataCadastro()));
 
+        if (pessoaalt.getDataUltimacompra() != null){
+        editDataUltima.setVisibility(View.VISIBLE);
+        editValorUltimacompra.setVisibility(View.VISIBLE);
+        editDataUltima.setText(ConvesorUtil.dateParaString(pessoaalt.getDataUltimacompra()));
+        editValorUltimacompra.setText(pessoaalt.getValorUltimacompra().toString());
+
+
+
+        }else{
+            editDataUltima.setVisibility(View.GONE);
+            editValorUltimacompra.setVisibility(View.GONE);
+        }
+
     }
 
     public Boolean ispessoAlt() {

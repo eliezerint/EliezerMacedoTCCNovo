@@ -54,6 +54,11 @@
         <item>Exportação</item>
     </string-array>
 
+    <string-array name="Carregar_Dados_De_Importacao">
+        <item>Importação</item>
+
+    </string-array>
+
     <string-array name="Array_tp_Relatorio_consulta">
         <item>Relatorio de Pedido</item>
         <item>Relatorio de Exportação</item>

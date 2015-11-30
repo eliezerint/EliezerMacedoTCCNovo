@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
@@ -61,17 +62,42 @@ public class PedidoDao extends AppDao {
 
     }
 
+
+
+    public String maiorData(Pedido pedido) {
+        Cursor consulta = getReadableDatabase().rawQuery("select max(p.Data_pedido) from Pedido p", null);
+        String data = null;
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return data = (consulta.getString(0));
+                }
+            } finally {
+                consulta.close();
+            }
+
+
+
+        }
+
+        return data;
+
+
+
+    }
+
     public void delete(Integer id) {
 
         getWritableDatabase().delete("Pedido", "idPedido = ?", new String[]{id.toString()});
     }
 
     public List<Pedido> list() {
-        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
-                "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido, " +
-                "p.Data_pedido , p.Valor_total " +
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
+                " p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , c.descricao,  " +
+                "  p.Data_pedido , p.Valor_total " +
                 "  From Pedido p " +
-                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa)", null);
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade)", null);
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -85,7 +111,42 @@ public class PedidoDao extends AppDao {
             pedido.setIdCondicaopag(c.getInt(3));
             pedido.setIdfilial(c.getInt(4));
             pedido.setNome(c.getString(5));
-            pedido.setFantasia(c.getString(6));
+            pedido.setCidade(c.getString(6));
+            pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
+            pedido.setTotal(c.getDouble(8));
+
+
+            pedidos.add(pedido);
+
+        }
+        c.close();
+        return pedidos;
+
+
+    }
+
+    public List<Pedido> listCodigo(String id) {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
+                " p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , c.descricao,  " +
+                "  p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade)" +
+                "  where  p.idPedido = ? ", new String[]{id});
+
+        List<Pedido> pedidos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pedido pedido = new Pedido();
+            pedido.setIdpedido(c.getInt(0));
+            pedido.setIdpessoa(c.getInt(1));
+            pedido.setIdvendedor(c.getInt(2));
+            pedido.setIdCondicaopag(c.getInt(3));
+            pedido.setIdfilial(c.getInt(4));
+            pedido.setNome(c.getString(5));
+            pedido.setCidade(c.getString(6));
             pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
             pedido.setTotal(c.getDouble(8));
 
@@ -101,10 +162,12 @@ public class PedidoDao extends AppDao {
 
     public List<Pedido> listCpfCnpj(String CpfCnpj) {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
-                "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido," +
+                "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome ,c.descricao," +
                 "p.Data_pedido , p.Valor_total " +
                 "  From Pedido p " +
-                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa)and  pe.CNPJCPF = ?", new String[]{CpfCnpj});
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa)" +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade)" +
+                "  and  pe.CNPJCPF = ? ", new String[]{CpfCnpj});
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -118,7 +181,7 @@ public class PedidoDao extends AppDao {
             pedido.setIdCondicaopag(c.getInt(3));
             pedido.setIdfilial(c.getInt(4));
             pedido.setNome(c.getString(5));
-            pedido.setFantasia(c.getString(6));
+            pedido.setCidade(c.getString(6));
             pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
             pedido.setTotal(c.getDouble(8));
 
@@ -133,10 +196,12 @@ public class PedidoDao extends AppDao {
     }
     public List<Pedido> list(String nome) {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
-                "  p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , pe.Nome_fantasiaApelido, " +
+                "  p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome , c.descricao, " +
                 "  p.Data_pedido , p.Valor_total " +
                 "  From Pedido p " +
-                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) and pe.Razao_socialNome like ?", new String[]{"%"+nome+"%"});
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade) " +
+                "  and pe.Razao_socialNome like ?", new String[]{"%"+nome+"%"});
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -150,7 +215,7 @@ public class PedidoDao extends AppDao {
             pedido.setIdCondicaopag(c.getInt(3));
             pedido.setIdfilial(c.getInt(4));
             pedido.setNome(c.getString(5));
-            pedido.setFantasia(c.getString(6));
+            pedido.setCidade(c.getString(6));
             pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
             pedido.setTotal(c.getDouble(8));
 

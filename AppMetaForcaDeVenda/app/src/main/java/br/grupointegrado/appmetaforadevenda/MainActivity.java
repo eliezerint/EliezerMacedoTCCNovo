@@ -1,16 +1,28 @@
 package br.grupointegrado.appmetaforadevenda;
 
+
 import android.content.Intent;
+
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import br.grupointegrado.appmetaforadevenda.Dao.AppDao;
@@ -22,8 +34,10 @@ import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
 
 
+
 public class MainActivity extends AppCompatActivity {
-     private AppDao DAO;
+
+    private AppDao DAO;
      private VendedorDao vendedordao;
      private Estado estado;
      private Button btentrar;
@@ -35,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private ProdutoDao produtodao;
     private CondicaoPgtoDao condpgtodao;
     private List<Produtos> lista;
+    private Uri FileUtils;
 
 
     @Override
@@ -73,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
                     } else
                         edtcdVendedor.setError("Vendedor nao autorizado");
 
-                } else edtcdVendedor.setError("O campo vazio");
+                } else {edtcdVendedor.setError("O campo vazio");
+                    DialogsDadosImpor();
+                }
             }
         });
 
@@ -86,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        criarPasta();
 
 
     }
@@ -100,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -118,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     public void onBackPressed() {
 
@@ -132,6 +154,63 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public void criarPasta(){
+        File diretorio = new File(Environment.getExternalStorageDirectory()+"/Impotacao");
+
+        if (!diretorio.exists()){
+            if(diretorio.mkdir());
+
+
+        }
+
+
+    }
+
+
+    public void DialogsDadosImpor() {
+        boolean wrapInScrollView = true;
+        MaterialDialog app = new MaterialDialog.Builder(this)
+                .title("Importação ")
+                .items(R.array.Carregar_Dados_De_Importacao)
+                .positiveText("Sair")
+                .autoDismiss(false)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        Intent i;
+                        if (text.equals("Importação")) {
+                           /* if (!criarPasta().exists()) {
+
+
+                                File pdffile = new File(criarPasta(), "RelatorioTeste.pdf");
+                                PdfWriter.getInstance(document, new FileOutputStream(pdffile));
+                                document.open();
+                                addMetaData(document);
+                                addTituloRelatorio(document);
+                                addConteudo(document);
+                                document.close();
+
+
+                            }
+                           Toast.makeText(dialog.getContext(),"em contrução", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();*/
+                        }
+                    }
+                })
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+
+    }
+
 
     public void produtoteste(){
         produtodao.saveGrupoProduto("Higiene pessoal");

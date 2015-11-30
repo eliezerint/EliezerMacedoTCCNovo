@@ -9,9 +9,11 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.Locale;
 
 import br.grupointegrado.appmetaforadevenda.Dao.PedidoDao;
+import br.grupointegrado.appmetaforadevenda.Dao.PessoaDao;
 import br.grupointegrado.appmetaforadevenda.Extras.SlidingTabLayout;
 import br.grupointegrado.appmetaforadevenda.Fragments.ItensFragment;
 import br.grupointegrado.appmetaforadevenda.Fragments.PedidoFragment;
@@ -19,6 +21,7 @@ import br.grupointegrado.appmetaforadevenda.Listagem.AdapterTabsViewPedido;
 import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
 import br.grupointegrado.appmetaforadevenda.Pedido.Pedido;
 import br.grupointegrado.appmetaforadevenda.R;
+import br.grupointegrado.appmetaforadevenda.Util.ConvesorUtil;
 
 
 /**
@@ -37,6 +40,7 @@ public class CadastroPedidoActivity extends AppCompatActivity {
     private  ItensFragment fragItens ;
 
     private PedidoDao pedidodao;
+    private PessoaDao pessoadao;
     private Integer idItens;
 
 
@@ -53,8 +57,7 @@ public class CadastroPedidoActivity extends AppCompatActivity {
 
 
         pedidodao = new PedidoDao(this);
-
-
+        pessoadao = new PessoaDao(this);
 
 
         //pageView
@@ -137,22 +140,17 @@ public class CadastroPedidoActivity extends AppCompatActivity {
                         try {
                             int idpedido = pedidodao.CosultaPedido();
                             pedidodao.savePedido(fragPedido.getPedido(), idpedido);
+                            pessoadao.UpdateUltimaCompra(fragPedido.getPedido());
 
 
                             int tamanho = fragItens.tamanhoLista();
                           if (tamanho > 0) {
                                     for (int x = 0; x < tamanho; x++) {
-
-
                                         try {
 
                                         pedidodao.saveItensPedido(fragItens.getTItens(idpedido,
                                                 fragPedido.getPedido().getIdpessoa(),
                                                 fragPedido.getPedido().getIdvendedor(), x));
-
-                                     /*   System.out.println(fragItens.getTItens(idpedido,
-                                                fragPedido.getPedido().getIdpessoa(),
-                                                fragPedido.getPedido().getIdvendedor(), x)+"lista");*/
 
                                     }catch(Exception e){
                                         Toast.makeText(this, "" + e, Toast.LENGTH_SHORT).show();
@@ -182,8 +180,8 @@ public class CadastroPedidoActivity extends AppCompatActivity {
 
                             fragPedido.edit_valor_Total.setText(fragItens.somaitens.toString());
 
-
                             pedidodao.Update(fragPedido.getPedido());
+
 
                             int tamanho = fragItens.tamanhoLista();
 

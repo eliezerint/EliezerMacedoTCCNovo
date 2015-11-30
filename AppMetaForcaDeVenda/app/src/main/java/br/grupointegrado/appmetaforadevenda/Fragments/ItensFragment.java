@@ -127,6 +127,7 @@ public class ItensFragment extends Fragment implements FragmentTab {
                       pedidoAlt.getIdpessoa().toString());
                  somaitens = 0.00;
 
+
                  for (int x = 0; x < listaitens.size(); x++) {
                      somaitens += listaitens.get(x).getTotal();
 

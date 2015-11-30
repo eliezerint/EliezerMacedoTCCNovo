@@ -35,10 +35,10 @@ public class AdapterItensPedido extends AbstractAdapter<AdapterItensPedido.ViewH
     @Override
     public void onBindViewHolder(ViewHolder holder, int position, ItensPedido item) {
         holder.tv_nomeproduto.setText(item.getNomeproduto());
-        holder.tv_quantidade.setText(item.getQuantidade().toString());
-        holder.tv_vlunitario.setText(item.getVlunitario().toString());
-        holder.tv_desconto.setText(item.getDesconto().toString());
-        holder.tv_valortotal.setText(item.getTotal().toString());
+        holder.tv_quantidade.setText(String.format("%.2f", item.getQuantidade()));
+        holder.tv_vlunitario.setText(String.format("%.2f", item.getVlunitario()));
+        holder.tv_desconto.setText(String.format("%.2f", item.getDesconto()));
+        holder.tv_valortotal.setText(String.format("%.2f", item.getTotal()));
 
     }
 
