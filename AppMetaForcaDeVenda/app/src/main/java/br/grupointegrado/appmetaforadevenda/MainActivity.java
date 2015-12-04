@@ -11,25 +11,39 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.support.v7.widget.Toolbar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URISyntaxException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.grupointegrado.appmetaforadevenda.Dao.AppDao;
+import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
 import br.grupointegrado.appmetaforadevenda.Dao.CondicaoPgtoDao;
+import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.FilialDao;
+import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
 import br.grupointegrado.appmetaforadevenda.Dao.ProdutoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.VendedorDao;
+import br.grupointegrado.appmetaforadevenda.Importacao.ImportacaoDados;
+import br.grupointegrado.appmetaforadevenda.Importacao.TelaImportacao;
+import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
 
@@ -50,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
     private CondicaoPgtoDao condpgtodao;
     private List<Produtos> lista;
     private Uri FileUtils;
+    private ArrayList<String> Arquivos = new ArrayList<>();
+    private MaterialBetterSpinner SpnListarArquivos ;
+    private CidadeDao cidadedao;
+    private Cidade cidade;
+    private File arquivoTxt;
+    private EstadoDao estadodao;
+    private PaisDao paisdao;
+    private Boolean isImportacao;
 
 
     @Override
@@ -69,10 +91,13 @@ public class MainActivity extends AppCompatActivity {
         filialdao = new FilialDao(this);
         condpgtodao = new CondicaoPgtoDao(this);
         produtodao = new ProdutoDao(this);
+        cidadedao = new CidadeDao(this);
+        estadodao = new EstadoDao(this);
+        paisdao = new PaisDao(this);
 
         edtcdVendedor = (MaterialEditText)findViewById(R.id.edtcdVendedor);
         btentrar      = (Button)findViewById(R.id.btentrar);
-
+        SpnListarArquivos = (MaterialBetterSpinner)findViewById(R.id.SpinnerImportacao);
 
 
 
@@ -103,10 +128,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        criarPasta();
 
 
     }
+
+
+
     public  void entrar(){
 
 
@@ -131,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 break;
-
-
         }
 
         return true;
@@ -154,21 +179,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    private static final int REQUEST_TELA_IMPORTACAO = 1001;
 
-    public void criarPasta(){
-        File diretorio = new File(Environment.getExternalStorageDirectory()+"/Impotacao");
+    private void fazerImportacao() {
+        Intent intent = new Intent(this, TelaImportacao.class);
+        intent.putExtra("Fazendo_importacao", true);
+        startActivityForResult(intent, REQUEST_TELA_IMPORTACAO);
+    }
 
-        if (!diretorio.exists()){
-            if(diretorio.mkdir());
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (REQUEST_TELA_IMPORTACAO == requestCode && resultCode == this.RESULT_OK) {
+            isImportacao = data.getBooleanExtra("importacao", false);
 
         }
-
-
     }
 
 
-    public void DialogsDadosImpor() {
+
+
+
+
+
+public void DialogsDadosImpor() {
         boolean wrapInScrollView = true;
         MaterialDialog app = new MaterialDialog.Builder(this)
                 .title("Importação ")
@@ -180,21 +214,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         Intent i;
                         if (text.equals("Importação")) {
-                           /* if (!criarPasta().exists()) {
-
-
-                                File pdffile = new File(criarPasta(), "RelatorioTeste.pdf");
-                                PdfWriter.getInstance(document, new FileOutputStream(pdffile));
-                                document.open();
-                                addMetaData(document);
-                                addTituloRelatorio(document);
-                                addConteudo(document);
-                                document.close();
-
-
-                            }
-                           Toast.makeText(dialog.getContext(),"em contrução", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();*/
+                            fazerImportacao();
+                            dialog.dismiss();
                         }
                     }
                 })

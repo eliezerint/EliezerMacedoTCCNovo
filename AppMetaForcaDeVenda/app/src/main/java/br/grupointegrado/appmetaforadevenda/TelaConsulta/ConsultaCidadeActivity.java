@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -35,6 +36,8 @@ import br.grupointegrado.appmetaforadevenda.Pessoa.Pais;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Pessoa;
 import br.grupointegrado.appmetaforadevenda.R;
 import br.grupointegrado.appmetaforadevenda.TelaCadastro.CadastroCidadeActivity;
+
+
 
 public class ConsultaCidadeActivity extends AppCompatActivity {
 
@@ -108,7 +111,7 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
                 Cidade cidade = adaptercidade.getItems().get(adapterPosition);
                 if (selecionandoCidade) {
                     Intent data = new Intent();
-                    data.putExtra("cidade_id", cidade.getId());
+                    data.putExtra("cidade_id", cidade.getIdcidade());
                     setResult(RESULT_OK, data);
                     finish();
                 } else {
@@ -161,15 +164,19 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
 
 
 
-        if(estadodao.list("BR").isEmpty() && paisdao.list().isEmpty()){
+        /*if(estadodao.list("BR").isEmpty() && paisdao.list().isEmpty()){
             cadastrarPais();
             cadastrarEstado();
-        }
+        }*/
+
+
 
 
 
         Consultacidade();
         getDadosSearch(this.getIntent());
+
+
 
     }
 
@@ -334,7 +341,7 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
 
     public void DeletarCidade(Cidade cidade) {
         try {
-            cidadedao.delete(cidade.getId());
+            cidadedao.delete(cidade.getIdcidade());
             Toast.makeText(this, "Cidade Excluida", Toast.LENGTH_SHORT).show();
             Consultacidade();
         } catch (Exception e) {
@@ -357,7 +364,7 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
 
     }
 
-    public void cadastrarPais(){
+   /* public void cadastrarPais(){
 
         paisdao.savePais("BR", "Brasil");
       //  paisdao.savePais("UY","Uruguai");
@@ -446,13 +453,13 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
         //estadodao.saveEstado("MO", "Montevidéu","UY");
 
 
-    }
+    }*/
     public void consultaestado(){
 
 
         if (MaterialSpinnerPais.getText().toString().isEmpty()){
             MaterialSpinnerEstado.setText("");
-            lista_estado = estadodao.list("BR");
+            lista_estado = estadodao.list("1");
 
         }else  if (conteudopais != null) {
             MaterialSpinnerEstado.setText("");

@@ -34,6 +34,6 @@ public class Pais {
 
     @Override
     public String toString() {
-        return idpais.toString();
+        return nome.toString();
     }
 }

@@ -3,11 +3,10 @@
 
      <string name="SQL_CREATE_CIDADE">
         CREATE TABLE Cidade (
-        id_Cidade INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_Cidade INTEGER,
         id_estado VARCHAR(2) NOT NULL,
-        descricao VARCHAR(40) UNIQUE,
+        descricao VARCHAR(40)NOT NULL,
         IBGE VARCHAR(7) NULL,
-        Pais VARCHAR(30) NULL,
         FOREIGN KEY(id_estado)
          REFERENCES estado(id_estado)
           );

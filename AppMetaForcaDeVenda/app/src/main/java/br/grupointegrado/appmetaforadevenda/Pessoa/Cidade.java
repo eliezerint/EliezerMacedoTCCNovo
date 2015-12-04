@@ -8,12 +8,12 @@ import java.io.SerializablePermission;
  */
 public class Cidade  implements Serializable {
 
-    Integer idcidade;
-    String idestado;
-    String descricao;
-    String ibge;
-    String Pais;
-    String nomeestado;
+    private Integer idcidade;
+    private String idestado;
+    private String descricao;
+    private String ibge;
+    private String Pais;
+    private String nomeestado;
 
 
     public Cidade( String pais, String idestado,String descricao, String ibge) {
@@ -29,6 +29,15 @@ public class Cidade  implements Serializable {
         this.descricao = descricao;
         this.ibge = ibge;
     }
+
+    public Cidade(String idestado,Integer idcidade, String descricao, String ibge) {
+
+        this.idestado = idestado;
+        this.idcidade = idcidade;
+        this.descricao = descricao;
+        this.ibge = ibge;
+    }
+
 
     public Cidade() {
 
@@ -58,13 +67,7 @@ public class Cidade  implements Serializable {
         this.nomeestado = nomeestado;
     }
 
-    public Integer getId() {
-        return idcidade;
-    }
 
-    public void setId(Integer id) {
-        this.idcidade = id;
-    }
 
     public String getIdestado() {
         return idestado;

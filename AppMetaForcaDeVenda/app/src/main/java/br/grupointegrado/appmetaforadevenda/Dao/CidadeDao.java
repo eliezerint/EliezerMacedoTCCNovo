@@ -18,11 +18,13 @@ public class CidadeDao extends AppDao {
     public CidadeDao(Context context) {
         super(context);
     }
-   // teste de inserção e consulta de Cidade
+
+
+    // teste de inserção e consulta de Cidade
 
     public void saveCidade(Cidade cidade) {
         ContentValues cv = new ContentValues();
-        cv.put("Pais", cidade.getPais());
+        cv.put("id_Cidade", cidade.getIdcidade());
         cv.put("id_estado", cidade.getIdestado());
         cv.put("Descricao", cidade.getDescricao());
         cv.put("IBGE", cidade.getIbge());
@@ -31,6 +33,28 @@ public class CidadeDao extends AppDao {
         getWritableDatabase().insert("Cidade", null, cv);
 
     }
+
+    public Integer CodigodaCidade(){
+        Cursor consulta = getReadableDatabase().rawQuery("Select COALESCE(Max(id_Cidade),0) + 1 AS MAX from Cidade ",
+                null);
+        Integer id = 0;
+
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return id = consulta.getInt(0);
+                }
+            } finally {
+                consulta.close();
+            }
+
+        }
+
+        return id;
+
+
+    }
+
 
     public void Update(Cidade cidade) {
         ContentValues cv = new ContentValues();
@@ -46,7 +70,10 @@ public class CidadeDao extends AppDao {
 
     //consulta de cidade
     public List<Cidade> list() {
-        Cursor c = getReadableDatabase().rawQuery("Select id_Cidade, Pais,id_estado ,descricao,IBGE from Cidade ",null);
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
+                " c.descricao,c.IBGE  from Cidade c " +
+                " inner join estado es  on(es.id_estado = c.id_estado ) " +
+                " inner join Pais p on (p.idPais = es.idPais)",null);
 
         List<Cidade> cidades = new ArrayList<>();
 
@@ -54,7 +81,7 @@ public class CidadeDao extends AppDao {
         while (c.moveToNext()) {
 
             Cidade cidade = new Cidade();
-            cidade.setId(c.getInt(0));
+            cidade.setIdcidade(c.getInt(0));
             cidade.setPais(c.getString(1));
             cidade.setIdestado(c.getString(2));
             cidade.setDescricao(c.getString(3));
@@ -67,8 +94,11 @@ public class CidadeDao extends AppDao {
         return cidades;
     }
     public List<Cidade> list(String Pais,String estado) {
-        Cursor c = getReadableDatabase().rawQuery("Select id_cidade, Pais,id_estado ,descricao,IBGE from Cidade where" +
-                " Pais like ? and id_estado like ? ",new String[]{Pais,estado});
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais,c.id_estado, " +
+                "  c.descricao,c.IBGE  from Cidade c " +
+                "  inner join estado es  on(es.id_estado = c.id_estado ) " +
+                "  inner join Pais p on (p.idPais = es.idPais) where " +
+                "  pais like ? and c.id_estado like ? ",new String[]{Pais,estado});
 
         List<Cidade> cidades = new ArrayList<>();
 
@@ -76,7 +106,7 @@ public class CidadeDao extends AppDao {
         while (c.moveToNext()) {
 
             Cidade cidade = new Cidade();
-            cidade.setId(c.getInt(0));
+            cidade.setIdcidade(c.getInt(0));
             cidade.setPais(c.getString(1));
             cidade.setIdestado(c.getString(2));
             cidade.setDescricao(c.getString(3));
@@ -89,8 +119,11 @@ public class CidadeDao extends AppDao {
         return cidades;
 
     }public List<Cidade> list(String nomecidade) {
-        Cursor c = getReadableDatabase().rawQuery("Select id_cidade, Pais,id_estado ,descricao,IBGE from Cidade where" +
-                " descricao like ? ",new String[]{"%"+nomecidade+"%"});
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
+                "  c.descricao,c.IBGE  from Cidade c " +
+                "  inner join estado es  on(es.id_estado = c.id_estado ) " +
+                "  inner join Pais p on (p.idPais = es.idPais) where" +
+                "  c.descricao like ? ",new String[]{"%"+nomecidade+"%"});
 
         List<Cidade> cidades = new ArrayList<>();
 
@@ -98,7 +131,7 @@ public class CidadeDao extends AppDao {
         while (c.moveToNext()) {
 
             Cidade cidade = new Cidade();
-            cidade.setId(c.getInt(0));
+            cidade.setIdcidade(c.getInt(0));
             cidade.setPais(c.getString(1));
             cidade.setIdestado(c.getString(2));
             cidade.setDescricao(c.getString(3));
@@ -112,8 +145,11 @@ public class CidadeDao extends AppDao {
     }
 
     public List<Cidade> listCodIbge(String CodIbge) {
-        Cursor c = getReadableDatabase().rawQuery("Select id_cidade, Pais, id_estado , descricao, IBGE from Cidade where" +
-                " IBGE like ? ",new String[]{CodIbge});
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
+                " c.descricao,c.IBGE  from Cidade c " +
+                " inner join estado es  on(es.id_estado = c.id_estado )" +
+                " inner join Pais p on (p.idPais = es.idPais) where" +
+                " c.IBGE like ? ",new String[]{CodIbge});
 
         List<Cidade> cidades = new ArrayList<>();
 
@@ -121,7 +157,7 @@ public class CidadeDao extends AppDao {
         while (c.moveToNext()) {
 
             Cidade cidade = new Cidade();
-            cidade.setId(c.getInt(0));
+            cidade.setIdcidade(c.getInt(0));
             cidade.setPais(c.getString(1));
             cidade.setIdestado(c.getString(2));
             cidade.setDescricao(c.getString(3));
@@ -140,6 +176,7 @@ public class CidadeDao extends AppDao {
 
         getWritableDatabase().delete("Cidade", "id_Cidade = ?", new String[]{id.toString()});
     }
+
     public Integer ConsultaCidade(String nome){
         Cursor consulta = getReadableDatabase().rawQuery("Select id_Cidade from Cidade " +
                         "where Descricao = ? ",

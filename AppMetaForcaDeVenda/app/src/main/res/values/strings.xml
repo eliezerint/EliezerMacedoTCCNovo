@@ -77,6 +77,8 @@
     <string name="min_ibge">O campo ibge ter no minimo 7 numeros </string>
     <string name="title_activity_consulta_pedido">ConsultaPedidoActivity</string>
     <string name="title_activity_consulta_importacao">ConsultaImportacaoActivity</string>
+    <string name="title_activity_tela_importacao">TelaImportacao</string>
+    <string name="title_activity_tela_esportacao">TelaEsportacao</string>
 
 
 

@@ -20,11 +20,11 @@ public class EstadoDao extends AppDao {
 
     //    teste de inserção e consulta de estado
 
-    public void saveEstado(String idestado, String descricao,String pais) {
+    public void saveEstado(Estado estado) {
         ContentValues cv = new ContentValues();
-        cv.put("id_estado", idestado);
-        cv.put("Descricao", descricao);
-        cv.put("idPais", pais);
+        cv.put("id_estado", estado.getIdestado());
+        cv.put("Descricao", estado.getDescricao());
+        cv.put("idPais", estado.getIdpais());
 
 
         getWritableDatabase().insert("estado", null, cv);
@@ -32,8 +32,9 @@ public class EstadoDao extends AppDao {
     }
 
     public List<Estado> list(String Pais) {
-        Cursor c = getReadableDatabase().rawQuery("Select id_estado, idPais ,Descricao from estado where " +
-                "idPais like ?",new String[]{Pais});
+        Cursor c = getReadableDatabase().rawQuery("Select e.id_estado,e.idPais, e.Descricao from estado e " +
+                " inner join Pais p on (p.idPais = e.idPais) " +
+                " where p.Nome = ? ",new String[]{Pais});
 
 
 

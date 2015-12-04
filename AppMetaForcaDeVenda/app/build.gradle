@@ -26,7 +26,7 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.7.8.1'
     compile 'net.i2p.android.ext:floatingactionbutton:1.10.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
-    compile ('com.weiwangcn.betterspinner:library-material:1.1.0') {
+    compile('com.weiwangcn.betterspinner:library-material:1.1.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.rengwuxian.materialedittext', module: 'library'
     }
@@ -35,9 +35,7 @@ dependencies {
     compile('com.mikepenz.materialdrawer:library:2.8.2@aar') {
         transitive = true
     }
-
     compile 'com.wdullaer:materialdatetimepicker:1.5.1'
     compile 'eu.inmite.android.lib:android-validation-komensky:0.9.4@aar'
-
-
+    compile files('Libs/itextpdf-5.4.2.jar')
 }

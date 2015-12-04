@@ -5,13 +5,13 @@ package br.grupointegrado.appmetaforadevenda.Pessoa;
  */
 public class Estado {
 
-    String idestado  = "PR";
-    String descricao = "Campo Mourao";
-    String idpais  =" BR";
+    private String idestado  ;
+    private String descricao ;
+    private String idpais  ;
 
-    public void Estado (String id_estado, String id_pais, String descricao) {
-        this.idestado = id_estado;
+    public void Estado ( String id_pais,String id_estado, String descricao) {
         this.idpais = id_pais;
+        this.idestado = id_estado;
         this.descricao = descricao;
     }
 

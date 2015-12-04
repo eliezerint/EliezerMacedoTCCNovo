@@ -18,10 +18,10 @@ public class PaisDao extends AppDao {
 
     }
 
-    public void savePais(String idPais, String nome) {
+    public void savePais(Pais pais) {
         ContentValues cv = new ContentValues();
-        cv.put("idPais", idPais);
-        cv.put("Nome", nome);
+        cv.put("idPais", pais.getIdpais());
+        cv.put("Nome", pais.getNome());
 
 
         getWritableDatabase().insert("Pais", null, cv);

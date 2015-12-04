@@ -3,6 +3,9 @@
     package="br.grupointegrado.appmetaforadevenda" >
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
 
     <application
         android:allowBackup="true"
@@ -137,6 +140,14 @@
         <activity
             android:name=".TelaConsulta.ConsultaImportacaoActivity"
             android:label="@string/title_activity_consulta_importacao" >
+        </activity>
+        <activity
+            android:name=".Importacao.TelaImportacao"
+            android:label="@string/title_activity_tela_importacao" >
+        </activity>
+        <activity
+            android:name=".Exportacao.TelaExportacao"
+            android:label="@string/title_activity_tela_esportacao" >
         </activity>
     </application>
 

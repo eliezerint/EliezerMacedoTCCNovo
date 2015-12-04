@@ -172,7 +172,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
             if(EditIbge.getText().toString().isEmpty()){
                return false;
             }
-        }else if(SpinnerPais.getText().toString().equals("BR")){
+        }else if(SpinnerPais.getText().toString().equals("BRASIL")){
             if(EditIbge.getText().toString().isEmpty()){
                return false;
             }
@@ -250,6 +250,18 @@ public class CadastroCidadeActivity extends AppCompatActivity {
 
 
     //pegar dados da tela e passar para o modelo
+    public Cidade getCidade() {
+        idcidade = cidadedao.CodigodaCidade();
+        return new Cidade(
+                conteudopais,
+                conteudoestado,
+                idcidade,
+                EditCidade.getText().toString(),
+                Mask.unmask(EditIbge.getText().toString()));
+
+
+    }
+
     public Cidade getCidadealt() {
         return new Cidade(
                 conteudopais,
@@ -275,7 +287,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
         if (Validate() == true) {
             if (cidadealt == null) {
                 try {
-                    cidadedao.saveCidade(getCidadealt());
+                    cidadedao.saveCidade(getCidade());
                     Toast.makeText(this, " salvo com sucesso ", Toast.LENGTH_SHORT).show();
                     LimparCampos();
 
