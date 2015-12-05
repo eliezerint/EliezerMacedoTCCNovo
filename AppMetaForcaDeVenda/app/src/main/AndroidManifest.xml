@@ -142,11 +142,11 @@
             android:label="@string/title_activity_consulta_importacao" >
         </activity>
         <activity
-            android:name=".Importacao.TelaImportacao"
+            android:name=".TelaImportacao.ImportacaoActivity"
             android:label="@string/title_activity_tela_importacao" >
         </activity>
         <activity
-            android:name=".Exportacao.TelaExportacao"
+            android:name=".TelaExportacao.ExportacaoActivity"
             android:label="@string/title_activity_tela_esportacao" >
         </activity>
     </application>

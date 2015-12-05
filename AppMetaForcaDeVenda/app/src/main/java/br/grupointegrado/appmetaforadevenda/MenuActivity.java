@@ -14,9 +14,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
 
 import br.grupointegrado.appmetaforadevenda.Dao.AppDao;
-import br.grupointegrado.appmetaforadevenda.Exportacao.TelaExportacao;
-import br.grupointegrado.appmetaforadevenda.Importacao.TelaImportacao;
-import br.grupointegrado.appmetaforadevenda.TelaCadastro.CadastroPedidoActivity;
+import br.grupointegrado.appmetaforadevenda.TelaExportacao.ExportacaoActivity;
+import br.grupointegrado.appmetaforadevenda.TelaImportacao.ImportacaoActivity;
 import br.grupointegrado.appmetaforadevenda.TelaConsulta.*;
 
 public class MenuActivity extends AppCompatActivity {
@@ -112,14 +111,14 @@ public class MenuActivity extends AppCompatActivity {
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         Intent i;
                         if (text.equals("Importação")) {
-                           i = new Intent(dialog.getContext(), TelaImportacao.class);
+                           i = new Intent(dialog.getContext(), ImportacaoActivity.class);
                            startActivity(i);
 
                             dialog.dismiss();
                         } else if (text.equals("Exportação")) {
-                            i = new Intent(dialog.getContext(), TelaExportacao.class);
+                            i = new Intent(dialog.getContext(), ExportacaoActivity.class);
                             startActivity(i);
-                            
+
                             dialog.dismiss();
                         }
 

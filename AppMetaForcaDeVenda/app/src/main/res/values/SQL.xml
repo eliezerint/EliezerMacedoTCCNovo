@@ -3,12 +3,13 @@
 
      <string name="SQL_CREATE_CIDADE">
         CREATE TABLE Cidade (
-        id_Cidade INTEGER,
+        id_Cidade INTEGER PRIMARY KEY,
         id_estado VARCHAR(2) NOT NULL,
-        descricao VARCHAR(40)NOT NULL,
+        descricao VARCHAR(40) NOT NULL,
         IBGE VARCHAR(7) NULL,
         FOREIGN KEY(id_estado)
-         REFERENCES estado(id_estado)
+         REFERENCES estado(id_estado),
+          UNIQUE (id_estado, descricao)
           );
 
         </string>
@@ -81,7 +82,7 @@
     <string name="SQL_CREATE_PARAMETRO">
 
         CREATE TABLE Parametro (
-         idParametro INTEGER  PRIMARY KEY AUTOINCREMENT,
+         idParametro INTEGER  PRIMARY KEY ,
          idVendedor INTEGER  NOT NULL,
          Faixa_inicial INTEGER  NULL,
          Faixa_final INTEGER  NULL,
@@ -94,7 +95,7 @@
     </string>
     <string name="SQL_CREATE_GRUPO_PRODUTO">
          CREATE TABLE GrupoProduto (
-             idGrupo_produto INTEGER PRIMARY KEY AUTOINCREMENT,
+             idGrupo_produto INTEGER PRIMARY KEY,
               Descricao VARCHAR(50) NOT NULL
           );
 
@@ -106,7 +107,7 @@
     <string name="SQL_CREATE_UNIDADE_MEDIDA">
 
         CREATE TABLE UnidadeMedida (
-          idUnidadeMedida INTEGER PRIMARY KEY AUTOINCREMENT,
+          idUnidadeMedida INTEGER PRIMARY KEY ,
            Descricao VARCHAR(50) NOT NULL,
            Sigla VARCHAR(2)NOT NULL
         );
@@ -118,7 +119,7 @@
     <string name="SQL_CREATE_PRODUTO">
 
          CREATE TABLE Produto (
-           idProduto INTEGER PRIMARY KEY AUTOINCREMENT,
+           idProduto INTEGER PRIMARY KEY ,
            idGrupo_produto INTEGER NOT NULL,
            idUnidadeMedida INTEGER NOT NULL,
            Descricao VARCHAR(50) NULL,

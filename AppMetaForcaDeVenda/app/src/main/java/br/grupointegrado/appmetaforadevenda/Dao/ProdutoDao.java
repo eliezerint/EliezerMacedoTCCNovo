@@ -7,7 +7,7 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.grupointegrado.appmetaforadevenda.Produtos.Grupos_Produtos;
+import br.grupointegrado.appmetaforadevenda.Produtos.GrupoProdutos;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
 import br.grupointegrado.appmetaforadevenda.Produtos.TabelaItenPreco;
 import br.grupointegrado.appmetaforadevenda.Produtos.Tabelapreco;
@@ -25,11 +25,14 @@ public class ProdutoDao extends AppDao {
 
 
 
-    public void saveProduto(String idprodutogrupo, String idunidade, String produto){
+    public void saveProduto(Produtos produto){
         ContentValues cv = new ContentValues();
-        cv.put("idGrupo_produto", idprodutogrupo);
-        cv.put("idUnidadeMedida", idunidade);
-        cv.put("Descricao", produto);
+        cv.put("idProduto", produto.getIdproduto());
+        cv.put("Descricao", produto.getDescricao());
+        cv.put("idUnidadeMedida", produto.getIdUnidademedida());
+        cv.put("idGrupo_produto", produto.getIdgrupopoduto());
+
+
 
 
         getWritableDatabase().insert("Produto", null, cv);
@@ -67,15 +70,15 @@ public class ProdutoDao extends AppDao {
 
     }
 
-    public List<Grupos_Produtos> listGrupos() {
+    public List<GrupoProdutos> listGrupos() {
         Cursor c = getReadableDatabase().rawQuery("Select gp.idGrupo_produto, gp.Descricao from GrupoProduto gp" , null);
 
-        List<Grupos_Produtos> grupoprodutos = new ArrayList<>();
+        List<GrupoProdutos> grupoprodutos = new ArrayList<>();
 
 
         while (c.moveToNext()) {
 
-            Grupos_Produtos grupoproduto = new Grupos_Produtos();
+            GrupoProdutos grupoproduto = new GrupoProdutos();
             grupoproduto.setIdgrupoProduto(c.getInt(0));
             grupoproduto.setDescricao(c.getString(1));
 
@@ -207,24 +210,25 @@ public class ProdutoDao extends AppDao {
 
 
     //Tabela de Grupos de Produto
-    public void saveGrupoProduto(String grupos_produtos){
+    public void saveGrupoProduto(GrupoProdutos grupos_produtos){
         ContentValues cv = new ContentValues();
-        cv.put("Descricao", grupos_produtos);
+        cv.put("idGrupo_produto", grupos_produtos.getIdgrupoProduto());
+        cv.put("Descricao", grupos_produtos.getDescricao());
 
         getWritableDatabase().insert("GrupoProduto", null, cv);
 
     }
 
-    public List<Grupos_Produtos> listGruposProduto() {
-        Cursor c = getReadableDatabase().rawQuery("Select idProduto, Descricao from GrupoProduto ", null);
+    public List<GrupoProdutos> listGruposProduto() {
+        Cursor c = getReadableDatabase().rawQuery("Select idGrupo_produto, Descricao from GrupoProduto ", null);
 
-        List<Grupos_Produtos> grupos_produtos = new ArrayList<>();
+        List<GrupoProdutos> grupos_produtos = new ArrayList<>();
 
 
         while (c.moveToNext()) {
 
-            Grupos_Produtos grupos_produto = new Grupos_Produtos();
-            grupos_produto.setIdproduto(c.getInt(0));
+            GrupoProdutos grupos_produto = new GrupoProdutos();
+            grupos_produto.setIdgrupoProduto(c.getInt(0));
             grupos_produto.setDescricao(c.getString(1));
 
             grupos_produtos.add(grupos_produto);
@@ -236,10 +240,12 @@ public class ProdutoDao extends AppDao {
     }
 
     //Tabela de Unidade de Medida
-    public void saveUnidadeMedida(String nomedaunidademedida, String unidademedida){
+    public void saveUnidadeMedida(UnidadeMedida Unidade){
         ContentValues cv = new ContentValues();
-        cv.put("Descricao", nomedaunidademedida);
-        cv.put("Sigla", unidademedida);
+        cv.put("idUnidadeMedida", Unidade.getIdunidademedida());
+        cv.put("Sigla", Unidade.getSigla());
+        cv.put("Descricao", Unidade.getDescricao());
+
 
         getWritableDatabase().insert("UnidadeMedida", null, cv);
 

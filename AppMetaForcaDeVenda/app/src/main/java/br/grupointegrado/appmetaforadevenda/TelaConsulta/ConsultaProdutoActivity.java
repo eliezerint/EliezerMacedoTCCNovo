@@ -23,9 +23,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -37,13 +34,12 @@ import br.grupointegrado.appmetaforadevenda.Fragments.ItensFragment;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterProduto;
 import br.grupointegrado.appmetaforadevenda.MainActivity;
 import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
-import br.grupointegrado.appmetaforadevenda.Produtos.Grupos_Produtos;
+import br.grupointegrado.appmetaforadevenda.Produtos.GrupoProdutos;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
 import br.grupointegrado.appmetaforadevenda.Produtos.TabelaItenPreco;
 import br.grupointegrado.appmetaforadevenda.Produtos.Tabelapreco;
 import br.grupointegrado.appmetaforadevenda.R;
 import br.grupointegrado.appmetaforadevenda.Vendedor.Vendedor;
-import eu.inmite.android.lib.validations.form.annotations.Length;
 
 public class ConsultaProdutoActivity extends AppCompatActivity {
 
@@ -87,8 +83,8 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
     private List<Vendedor> listaVendedor;
     private ItensPedido editandoProduto ;
     private List<Produtos> listaproduto;
-    private List<Grupos_Produtos>  listaGrupos;
-    private ArrayAdapter<Grupos_Produtos> grupo_adapter;
+    private List<GrupoProdutos>  listaGrupos;
+    private ArrayAdapter<GrupoProdutos> grupo_adapter;
     private String conteudoGrupoProduto;
     private Tabelapreco alttabelapreco;
     private ArrayList<Integer> listaDeProdutos;
@@ -179,7 +175,7 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
         listaGrupos = produtodao.listGrupos();
 
 
-        grupo_adapter = new ArrayAdapter<Grupos_Produtos>(this, android.R.layout.simple_list_item_1, listaGrupos);
+        grupo_adapter = new ArrayAdapter<GrupoProdutos>(this, android.R.layout.simple_list_item_1, listaGrupos);
 
         autocomplete.setAdapter(grupo_adapter);
 

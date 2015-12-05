@@ -11,26 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.support.v7.widget.Toolbar;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URISyntaxException;
-import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import br.grupointegrado.appmetaforadevenda.Dao.AppDao;
@@ -41,12 +33,10 @@ import br.grupointegrado.appmetaforadevenda.Dao.FilialDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
 import br.grupointegrado.appmetaforadevenda.Dao.ProdutoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.VendedorDao;
-import br.grupointegrado.appmetaforadevenda.Importacao.ImportacaoDados;
-import br.grupointegrado.appmetaforadevenda.Importacao.TelaImportacao;
+import br.grupointegrado.appmetaforadevenda.TelaImportacao.ImportacaoActivity;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
-import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
-
+import br.grupointegrado.appmetaforadevenda.Vendedor.Vendedor;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -62,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private FilialDao filialdao;
     private ProdutoDao produtodao;
     private CondicaoPgtoDao condpgtodao;
-    private List<Produtos> lista;
+    private List<Vendedor> lista;
     private Uri FileUtils;
     private ArrayList<String> Arquivos = new ArrayList<>();
     private MaterialBetterSpinner SpnListarArquivos ;
@@ -113,19 +103,27 @@ public class MainActivity extends AppCompatActivity {
                     } else
                         edtcdVendedor.setError("Vendedor nao autorizado");
 
-                } else {edtcdVendedor.setError("O campo vazio");
+                } else {
+                    edtcdVendedor.setError("O campo vazio");
                     DialogsDadosImpor();
                 }
             }
         });
 
-       lista = produtodao.list();
+
+
+        criaDiretorio(new String[]{"/Importacao", "/Exportacao"});
+
+
+       lista = vendedordao.list();
         if (lista.isEmpty()){
-            produtoteste();
-            filialTeste();
-            condpgtoteste();
             vendedorteste();
+            condpgtoteste();
+            filialTeste();
+            precoTeste();
         }
+
+
 
 
 
@@ -182,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_TELA_IMPORTACAO = 1001;
 
     private void fazerImportacao() {
-        Intent intent = new Intent(this, TelaImportacao.class);
+        Intent intent = new Intent(this, ImportacaoActivity.class);
         intent.putExtra("Fazendo_importacao", true);
         startActivityForResult(intent, REQUEST_TELA_IMPORTACAO);
     }
@@ -231,9 +229,47 @@ public void DialogsDadosImpor() {
 
 
     }
+    public  void criaDiretorio (String[] subdiretorio){
+
+        File diretorio = new File(Environment.getExternalStorageDirectory(), "Meta/");
+        diretorio.mkdirs();
+        for (int x = 0; x < 2; x++){
+
+                String caminhoimportacao = diretorio.toString() + subdiretorio[x];
+
+                new File(caminhoimportacao).mkdirs();
 
 
-    public void produtoteste(){
+        }
+
+        diretorio.canRead();
+
+
+
+
+
+    }
+
+    public  void criaDiretorioExportacao (){
+
+        File diretorio = new File(Environment.getExternalStorageDirectory(), "Meta/");
+        diretorio = new File(diretorio, "Exportacao/");
+
+        diretorio.mkdirs();
+
+
+    }
+
+
+
+    public void vendedorteste(){
+        vendedordao.saveVendedor("Lucas", 20.00);
+        vendedordao.saveVendedor("Amanda",  30.00);
+        vendedordao.saveVendedor("Eliezer", 45.00);
+    }
+
+     //Teste para inserir produtos
+   /* public void produtoteste(){
         produtodao.saveGrupoProduto("Higiene pessoal");
         produtodao.saveGrupoProduto("Limpeza");
 
@@ -269,11 +305,36 @@ public void DialogsDadosImpor() {
         produtodao.saveItemtabelaPreco("6","Aprazo", 4.20);
     }
 
-    public void vendedorteste(){
-          vendedordao.saveVendedor("Lucas", 20.00);
-         vendedordao.saveVendedor("Amanda",  30.00);
-         vendedordao.saveVendedor("Eliezer", 45.00 );
+
+   */
+    public void precoTeste(){
+        produtodao.savePreco("1", "Atacado");
+        produtodao.saveItemtabelaPreco("1", "Avista", 1.75);
+        produtodao.saveItemtabelaPreco("1","Aprazo",2.00);
+
+        produtodao.savePreco("1", "Varejo");
+        produtodao.saveItemtabelaPreco("2", "Avista", 2.00);
+        produtodao.saveItemtabelaPreco("2","Aprazo", 2.50);
+
+        produtodao.savePreco("2", "Atacado");
+        produtodao.saveItemtabelaPreco("3", "Avista", 3.75);
+        produtodao.saveItemtabelaPreco("3","Aprazo",4.00);
+
+        produtodao.savePreco("2", "Varejo");
+        produtodao.saveItemtabelaPreco("4", "Avista", 5.00);
+        produtodao.saveItemtabelaPreco("4","Aprazo", 6.20);
+
+        produtodao.savePreco("3", "Atacado");
+        produtodao.saveItemtabelaPreco("5", "Avista", 1.75);
+        produtodao.saveItemtabelaPreco("5","Aprazo",2.50);
+
+        produtodao.savePreco("3", "Varejo");
+        produtodao.saveItemtabelaPreco("6", "Avista", 3.00);
+        produtodao.saveItemtabelaPreco("6","Aprazo", 4.20);
     }
+
+
+
 
     public void filialTeste(){
         filialdao.saveFilial("501");
@@ -281,7 +342,7 @@ public void DialogsDadosImpor() {
     }
 
     public void condpgtoteste(){
-                condpgtodao.saveCondPgto("30/60",2.0,30);
+        condpgtodao.saveCondPgto("30/60",2.0,30);
         condpgtodao.saveCondPgto("15/30/45",3.0,15);
         condpgtodao.saveCondPgto("30/60/90",3.0,30);
         condpgtodao.saveCondPgto("A vista",1.0,0);

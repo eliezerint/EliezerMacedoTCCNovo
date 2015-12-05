@@ -1,7 +1,5 @@
 package br.grupointegrado.appmetaforadevenda.Importacao;
 
-import android.content.Context;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,9 +8,13 @@ import java.io.InputStreamReader;
 import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
 import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
+import br.grupointegrado.appmetaforadevenda.Dao.ProdutoDao;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Pais;
+import br.grupointegrado.appmetaforadevenda.Produtos.GrupoProdutos;
+import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
+import br.grupointegrado.appmetaforadevenda.Produtos.UnidadeMedida;
 
 import java.util.StringTokenizer;
 
@@ -80,7 +82,7 @@ public class ImportacaoDados {
             }
         }
     }
-    public static void importarEstado(File arquivo, EstadoDao estadodao, PaisDao paisdao, CidadeDao cidadedao) {
+    public static void importarDados(File arquivo, EstadoDao estadodao, PaisDao paisdao, CidadeDao cidadedao, ProdutoDao produtodao) {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(arquivo);
@@ -98,6 +100,15 @@ public class ImportacaoDados {
                       tabela = partes[1];
                   }else if(partes[1].equals("Cidade")) {
                       tabela = partes[1];
+                  }else if(partes[1].equals("Grupo")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("Unidade")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("Produto")) {
+                      tabela = partes[1];
+
                   }
 
 
@@ -107,6 +118,12 @@ public class ImportacaoDados {
                       salvarEstado(partes, estadodao);
                   }else if (tabela.equals("Cidade")){
                       salvarCidade(partes,cidadedao);
+                  }else if (tabela.equals("Grupo")){
+                      salvarGrupo(partes,produtodao);
+                  }else if (tabela.equals("Unidade")){
+                      salvarUnidade(partes, produtodao);
+                  }else if (tabela.equals("Produto")){
+                      salvarProduto(partes, produtodao);
                   }
 
 
@@ -134,17 +151,6 @@ public class ImportacaoDados {
 
 
     public static void salvarEstado(String[] partes, EstadoDao estadodao){
-        System.out.println("tamanho estado:" + partes.length);
-        if (partes[1].equals("1")) {
-            System.out.println("Cod.Unimake:" + partes[1]);
-            System.out.println("DataImportação:" + partes[2]);
-            System.out.println("Hora:" + partes[3]);
-        }else if(partes.length > 4){
-            System.out.println("Cod.Unimake:" + partes[1]);
-            System.out.println("ID:" + partes[2]);
-            System.out.println("UF:" + partes[3]);
-            System.out.println("Nome:" + partes[4]);
-        }
 
         if (partes[1].equals("2")) {
             Estado estado = new Estado();
@@ -160,17 +166,6 @@ public class ImportacaoDados {
 
     public static void salvarCidade(String[] partes, CidadeDao cidadedao){
         System.out.println("tamanho:" + partes.length);
-        if (partes[1].equals("1")) {
-            System.out.println("Cod.Unimake:" + partes[1]);
-            System.out.println("DataImportação:" + partes[2]);
-            System.out.println("Hora:" + partes[3]);
-        }else if(partes.length > 5){
-            System.out.println("Cod.Unimake:" + partes[1]);
-            System.out.println("ID:" + partes[2]);
-            System.out.println("UF:" + partes[3]);
-            System.out.println("Nome:" + partes[4]);
-            System.out.println("IBGE:" + partes[5]);
-        }
 
         if (partes[1].equals("2")) {
             Cidade cidade = new Cidade();
@@ -185,6 +180,48 @@ public class ImportacaoDados {
 
 
             cidadedao.saveCidade(cidade);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+
+    public static void salvarGrupo(String[] partes, ProdutoDao produtodao){
+        if (partes[1].equals("2")) {
+            GrupoProdutos grupo = new GrupoProdutos();
+            grupo.setIdgrupoProduto(Integer.parseInt(partes[2]));
+            grupo.setDescricao(partes[3]);
+
+            produtodao.saveGrupoProduto(grupo);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+
+    public static void salvarUnidade(String[] partes, ProdutoDao produtodao){
+        if (partes[1].equals("2")) {
+            UnidadeMedida unidade = new UnidadeMedida();
+            unidade.setIdunidademedida(Integer.parseInt(partes[2]));
+            unidade.setSigla(partes[3]);
+            unidade.setDescricao(partes[4]);
+
+
+            produtodao.saveUnidadeMedida(unidade);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+
+    public static void salvarProduto(String[] partes, ProdutoDao produtodao){
+        if (partes[1].equals("2")) {
+
+            Produtos produto = new Produtos();
+            produto.setIdproduto(Integer.parseInt(partes[2]));
+            produto.setDescricao((partes[3]));
+            produto.setIdUnidademedida(Integer.parseInt(partes[4]));
+            produto.setIdgrupopoduto(Integer.parseInt(partes[5]));
+
+
+            produtodao.saveProduto(produto);
         } else if (partes[1].equals("9")) {
 
         }

@@ -36,6 +36,8 @@
     <string name="title_activity_PessoaTabs">PessoaTabs</string>
     <string name="title_pessoa">Cliente</string>
     <string name="Adicionar_itens">Adicionar Produto</string>
+    <string name="progress_bar">Fazendo a Importação</string>
+    <string name="Aguarde">por favor, aguarde..</string>
 
 
 <!-- TODO: Remove or change this placeholder text -->

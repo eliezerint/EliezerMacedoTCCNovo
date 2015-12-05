@@ -65,5 +65,11 @@
         <item>Relatorio de Importação</item>
     </string-array>
 
+    <string-array name="Array_de_Exportacao">
+    <item>ExportarPDF</item>
+    <item>ExportarTXT</item>
+
+    </string-array>
+
 
 </resources>

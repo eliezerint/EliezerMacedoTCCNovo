@@ -171,6 +171,31 @@ public class CidadeDao extends AppDao {
     }
 
 
+    public Cidade retornaCidade(String idcidade) {
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
+                " c.descricao,c.IBGE  from Cidade c " +
+                " inner join estado es  on(es.id_estado = c.id_estado ) " +
+                " inner join Pais p on (p.idPais = es.idPais) where c.id_Cidade = ? ", new String[]{idcidade});
+
+        Cidade cidade = new Cidade();
+
+
+        if (c.moveToFirst()) {
+
+
+            cidade.setIdcidade(c.getInt(0));
+            cidade.setPais(c.getString(1));
+            cidade.setIdestado(c.getString(2));
+            cidade.setDescricao(c.getString(3));
+            cidade.setIbge(c.getString(4));
+
+
+        }
+        c.close();
+        return cidade;
+    }
+
+
 
     public void delete(Integer id) {
 

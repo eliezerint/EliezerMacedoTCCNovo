@@ -55,4 +55,32 @@ public class EstadoDao extends AppDao {
         c.close();
         return estados;
     }
+
+    public Estado retornaEstado( String idestado){
+        Cursor c = getReadableDatabase().rawQuery("Select e.id_estado,e.idPais, e.Descricao from estado e " +
+                " inner join Pais p on (p.idPais = e.idPais) " +
+                " where e.id_estado = ? ",new String[]{idestado});
+
+
+
+       Estado estado = new Estado();
+
+
+        if (c.moveToFirst()) {
+
+
+            estado.setIdestado(c.getString(0));
+            estado.setIdpais(c.getString(1));
+            estado.setDescricao(c.getString(2));
+
+
+
+
+
+
+        }
+        c.close();
+        return estado;
+    }
+
 }

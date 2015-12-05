@@ -122,7 +122,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:editable="false"
-        android:focusable="false"
         android:hint="Valor Total C/ Desconto"
         app:met_baseColor="@android:color/black"
         app:met_floatingLabel="highlight"

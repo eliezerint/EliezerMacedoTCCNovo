@@ -160,6 +160,41 @@ public class PedidoDao extends AppDao {
 
     }
 
+    public List<Pedido> listCodigoCliente(String id) {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
+                " p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , c.descricao,  " +
+                "  p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade)" +
+                "  where  p.idPessoa = ? ", new String[]{id});
+
+        List<Pedido> pedidos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pedido pedido = new Pedido();
+            pedido.setIdpedido(c.getInt(0));
+            pedido.setIdpessoa(c.getInt(1));
+            pedido.setIdvendedor(c.getInt(2));
+            pedido.setIdCondicaopag(c.getInt(3));
+            pedido.setIdfilial(c.getInt(4));
+            pedido.setNome(c.getString(5));
+            pedido.setCidade(c.getString(6));
+            pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
+            pedido.setTotal(c.getDouble(8));
+
+
+            pedidos.add(pedido);
+
+        }
+        c.close();
+        return pedidos;
+
+
+    }
+
     public List<Pedido> listCpfCnpj(String CpfCnpj) {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido, " +
                 "   p.idPessoa, p.idVendedor , p.idcondicaopagamento , p.idFilial ,pe.Razao_socialNome ,c.descricao," +
@@ -253,6 +288,43 @@ public class PedidoDao extends AppDao {
 
     }
 
+    public Pedido retornaPedido(String id){
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
+                " p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , c.descricao,  " +
+                "  p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade)" +
+                "  where  p.idPedido = ? ", new String[]{id});
+
+        Pedido pedido = new Pedido();
+
+
+        while (c.moveToNext()) {
+
+
+            pedido.setIdpedido(c.getInt(0));
+            pedido.setIdpessoa(c.getInt(1));
+            pedido.setIdvendedor(c.getInt(2));
+            pedido.setIdCondicaopag(c.getInt(3));
+            pedido.setIdfilial(c.getInt(4));
+            pedido.setNome(c.getString(5));
+            pedido.setCidade(c.getString(6));
+            pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
+            pedido.setTotal(c.getDouble(8));
+
+
+
+
+        }
+        c.close();
+        return pedido;
+
+
+    }
+
+
+
 
 
 
@@ -303,7 +375,8 @@ public class PedidoDao extends AppDao {
     public List<ItensPedido> listitens(String idpedido,String idVendedor,String idpessoa) {
         Cursor c = getReadableDatabase().rawQuery("select  i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
                 "      i.Quantidade, i.vl_unitario, ((i.vl_unitario-(i.vl_unitario*i.desconto/100)) * i.Quantidade)as total" +
-                "       from ItensPedido i, Produto p" +
+                "       from ItensPedido i" +
+                "      inner join Produto p on (p.idProduto = i.idProduto) " +
                 "        where i.idPedido = ? and i.idVendedor = ? and i.idPessoa = ? and p.idProduto = i.idProduto", new String[]{idpedido,idVendedor,idpessoa});
 
         List<ItensPedido> itens = new ArrayList<>();
@@ -331,6 +404,39 @@ public class PedidoDao extends AppDao {
 
 
     }
+    public List<ItensPedido> listitens(String idpedido) {
+        Cursor c = getReadableDatabase().rawQuery("select  i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
+                "      i.Quantidade, i.vl_unitario, ((i.vl_unitario-(i.vl_unitario*i.desconto/100)) * i.Quantidade)as total" +
+                "       from ItensPedido i" +
+                "       inner join Produto p on (p.idProduto = i.idProduto) " +
+                "        where i.idPedido = ? ", new String[]{idpedido});
+
+        List<ItensPedido> itens = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            ItensPedido iten = new ItensPedido();
+            iten.setIdpedido(c.getInt(0));
+            iten.setIdProduto(c.getInt(1));
+            iten.setNomeproduto(c.getString(2));
+            iten.setIdpessoa(c.getInt(3));
+            iten.setIdvendedor(c.getInt(4));
+            iten.setDesconto(c.getDouble(5));
+            iten.setQuantidade(c.getDouble(6));
+            iten.setVlunitario(c.getDouble(7));
+            iten.setTotal(c.getDouble(8));
+
+
+            itens.add(iten);
+
+        }
+        c.close();
+        return itens;
+
+
+    }
+
 
 
 

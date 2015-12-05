@@ -49,5 +49,20 @@ public class PaisDao extends AppDao {
         return paises;
     }
 
+    public Pais retornaPais(String id) {
+        Cursor c = getReadableDatabase().rawQuery("Select  idPais ,Nome from Pais  where idPais = ?" +
+                " ",new String[]{id});
+
+        if (c.moveToFirst()){
+            return new Pais (
+            c.getString(0),
+            c.getString(1));
+
+        }
+        c.close();
+        return  null;
+    }
+
+
 
 }
