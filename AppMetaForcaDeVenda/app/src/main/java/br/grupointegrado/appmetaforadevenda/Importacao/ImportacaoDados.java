@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
 public class ImportacaoDados {
 
 
-
+    public static Integer TotalRegistro;
 
     public static void importarCidade(File arquivo, CidadeDao cidadedao) {
         FileInputStream fis = null;
@@ -32,7 +32,6 @@ public class ImportacaoDados {
             fis = new FileInputStream(arquivo);
             BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
             String linha ;
-            StringTokenizer linhacomToken;
             while ((linha = reader.readLine()) != null) {
                 System.out.println("Linha do arquivo: " + linha);
                 String[] partes = linha.split("\\|");
@@ -133,10 +132,14 @@ public class ImportacaoDados {
         } finally {
             try {
                 fis.close();
+
             } catch (Exception e) {
             }
         }
+
     }
+
+
     public static void salvarPais(String[] partes, PaisDao paisdao){
         if (partes[1].equals("2")) {
             Pais pais = new Pais();
@@ -165,7 +168,7 @@ public class ImportacaoDados {
     }
 
     public static void salvarCidade(String[] partes, CidadeDao cidadedao){
-        System.out.println("tamanho:" + partes.length);
+
 
         if (partes[1].equals("2")) {
             Cidade cidade = new Cidade();

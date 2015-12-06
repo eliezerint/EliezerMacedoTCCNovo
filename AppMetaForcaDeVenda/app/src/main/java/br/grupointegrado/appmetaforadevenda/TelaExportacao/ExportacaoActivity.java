@@ -2,6 +2,7 @@ package br.grupointegrado.appmetaforadevenda.TelaExportacao;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +40,7 @@ import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PedidoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PessoaDao;
+import br.grupointegrado.appmetaforadevenda.Exportacao.ExportarPedido;
 import br.grupointegrado.appmetaforadevenda.Listagem.AdapterPedido;
 import br.grupointegrado.appmetaforadevenda.Pedido.ItensPedido;
 import br.grupointegrado.appmetaforadevenda.Pedido.Pedido;
@@ -71,6 +73,7 @@ public class ExportacaoActivity extends AppCompatActivity {
     private Cidade cidade;
     private List<Telefone> listatelefone;
     private List<Pedido> listapedido;
+    private List<ItensPedido> listaitens;
 
     private RecyclerView recyclerviewpedido;
     private AdapterPedido adapterpedido;
@@ -78,7 +81,8 @@ public class ExportacaoActivity extends AppCompatActivity {
     private Integer idpedido;
     private String nomepedido;
     private ListView listview;
-    private ArrayList<String> Arquivos = new ArrayList<>();;
+    private ArrayList<String> listArquivos = new ArrayList<>();
+
     private List lista;
     private String Item;
     private File arquivoTxtPDF;
@@ -181,6 +185,11 @@ public class ExportacaoActivity extends AppCompatActivity {
                             dialog.dismiss();
                         } else if (text.equals("ExportarTXT")) {
 
+                            listaitens = pedidodao.listitens(pedido.getIdpedido().toString());
+                            listapedido = pedidodao.listCodigo(pedido.getIdpedido().toString());
+                            ExportarPedido.exportarTxt(listapedido, listaitens, nomeDiretorioExportacao());
+                            PreencherLista(pedido);
+                            enviarEmail(pedido);
                             dialog.dismiss();
                         }
 
@@ -212,8 +221,9 @@ public class ExportacaoActivity extends AppCompatActivity {
 
          listview = (ListView)dialog.findViewById(R.id.listviewExportacao);
 
+        ListaExportacao();
 
-        lista = Arquivos;
+        lista = listArquivos;
 
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
@@ -230,10 +240,7 @@ public class ExportacaoActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-                dialog.show();
+        dialog.show();
 
     }
 
@@ -245,7 +252,8 @@ public class ExportacaoActivity extends AppCompatActivity {
         Intent email = new Intent(Intent.ACTION_SEND);
         email.putExtra(Intent.EXTRA_EMAIL, new String[]{pessoa.getEmail()});
         email.putExtra(Intent.EXTRA_SUBJECT, "");
-        email.putExtra(Intent.EXTRA_TEXT, "");
+        email.putExtra(Intent.EXTRA_TEXT,"" );
+        email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + arquivoTxtPDF.getAbsolutePath()));
         email.setType("message/rfc822");
         startActivity(Intent.createChooser(email, "Enviar email  :"));
     }
@@ -303,15 +311,15 @@ public class ExportacaoActivity extends AppCompatActivity {
 
 
 
-        if(arquivos != null)
-        {
+        if(arquivos != null ) {
+            listArquivos.clear();
             int length = arquivos.length;
             for(int i = 0; i < length; ++i)
             {
                 File f = arquivos[i];
                 if (f.isFile())
                 {
-                    Arquivos.add(f.getName());
+                    listArquivos.add(f.getName());
                 }
             }
 
@@ -319,6 +327,16 @@ public class ExportacaoActivity extends AppCompatActivity {
         }
 
     }
+  public void PreencherLista(Pedido pedido) {
+
+      pessoa = pessoadao.retornaPessoa(pedido.getIdpessoa().toString());
+      cidade = cidadedao.retornaCidade(pessoa.getIdCidade().toString());
+      estado = estadodao.retornaEstado(cidade.getIdestado());
+      pais = paisdao.retornaPais(estado.getIdpais());
+      listatelefone = pessoadao.listTelefone(pessoa.getIdpessoa().toString());
+      listapedido = pedidodao.listCodigoCliente(pessoa.getIdpessoa().toString());
+
+  }
 
     public File nomeDiretorioExportacao() {
 
@@ -341,13 +359,7 @@ public class ExportacaoActivity extends AppCompatActivity {
     //cria arquivo pdf
     public void criarPdf(Pedido pedido){
 
-
-        pessoa = pessoadao.retornaPessoa(pedido.getIdpessoa().toString());
-        cidade = cidadedao.retornaCidade(pessoa.getIdCidade().toString());
-        estado = estadodao.retornaEstado(cidade.getIdestado());
-        pais = paisdao.retornaPais(estado.getIdpais());
-        listatelefone = pessoadao.listTelefone(pessoa.getIdpessoa().toString());
-        listapedido = pedidodao.listCodigoCliente(pessoa.getIdpessoa().toString());
+        PreencherLista(pedido);
 
         Document documento = new Document();
         File pdffile = new File(nomeDiretorioExportacao(), "/"+pessoa.getRazaoSocialNome()+".pdf");
@@ -360,7 +372,6 @@ public class ExportacaoActivity extends AppCompatActivity {
 
 
                 documento.open();
-                addTitlePage(documento);
                 addMetaData(documento);
                 addContent(documento,pais,estado,cidade,pessoa,listatelefone,listapedido,pedidodao);
                 documento.close();
@@ -451,7 +462,7 @@ public class ExportacaoActivity extends AppCompatActivity {
         subCatPart.add(new Paragraph("CEP        : "+pessoa.getCep()));
         subCatPart.add(new Paragraph("Data Cadastro        : "+pessoa.getDataCadastro().toString()));
         subCatPart.add(new Paragraph("Data Utima venda     : "+pessoa.getDataUltimacompra().toString()));
-        subCatPart.add(new Paragraph("Valor Utilma venda   : " + pessoa.getValorUltimacompra().toString()));
+        subCatPart.add(new Paragraph("Valor Utilma venda   : " +String.format("%.2f",pessoa.getValorUltimacompra())));
 
         subPara = new Paragraph("Cadastro de Telefone ", subFont);
         subCatPart = catPart.addSection(subPara);
@@ -481,16 +492,11 @@ public class ExportacaoActivity extends AppCompatActivity {
 
         createListPedido(subCatPart, listapedido, pedidodao);
         Paragraph paragraphPedido = new Paragraph();
-        addEmptyLine(paragraphPedido, 10);
+        addEmptyLine(paragraphPedido, listapedido.size());
         subCatPart.add(paragraphPedido);
 
 
 
-       /* List<ItensPedido>listaItens = pedidodao.listitens(1+"");
-        createListItens(subCatPart, listaItens);
-        Paragraph paragraphitens = new Paragraph();
-        addEmptyLine(paragraphitens, 5);
-        subCatPart.add(paragraphitens);*/
 
 
         document.add(catPart);

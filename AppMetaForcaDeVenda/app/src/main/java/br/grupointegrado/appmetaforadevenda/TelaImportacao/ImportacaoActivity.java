@@ -16,17 +16,25 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.Delayed;
 
+import br.grupointegrado.appmetaforadevenda.Dao.AppDao;
 import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
 import br.grupointegrado.appmetaforadevenda.Dao.CondicaoPgtoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.FilialDao;
+import br.grupointegrado.appmetaforadevenda.Dao.ImportacaoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
 import br.grupointegrado.appmetaforadevenda.Dao.ProdutoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.VendedorDao;
+import br.grupointegrado.appmetaforadevenda.Importacao.Importacao;
 import br.grupointegrado.appmetaforadevenda.Importacao.ImportacaoDados;
 import br.grupointegrado.appmetaforadevenda.R;
+import br.grupointegrado.appmetaforadevenda.Util.ConvesorUtil;
 
 public class ImportacaoActivity extends AppCompatActivity {
 
@@ -49,6 +57,9 @@ public class ImportacaoActivity extends AppCompatActivity {
     private String Item;
     private boolean importacaoConcluida = false;
     private boolean fazendoImportcao = false;
+    private Boolean isimport = false;
+    private ImportacaoDao importacaodao;
+    private AppDao appdao;
 
 
     @Override
@@ -70,6 +81,8 @@ public class ImportacaoActivity extends AppCompatActivity {
         cidadedao = new CidadeDao(this);
         estadodao = new EstadoDao(this);
         paisdao = new PaisDao(this);
+        importacaodao = new ImportacaoDao(this);
+        appdao = new AppDao(this);
 
 
 
@@ -105,8 +118,11 @@ public class ImportacaoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Item != null){
-                    ImportararquivoEstado(Item);
+                    progressBar();
+
                     importacaoConcluida = true;
+                    ImportararquivoEstado(Item);
+
                 }
 
             }
@@ -152,11 +168,21 @@ public class ImportacaoActivity extends AppCompatActivity {
 
         arquivoTxt = new File(nomeDiretorioImportacao().toString(),nomeArquivo);
 
-       // ImportacaoDados.importarDados(arquivoTxt, estadodao, paisdao, cidadedao, produtodao);
+        appdao.deletaRegistroBanco();
+        ImportacaoDados.importarDados(arquivoTxt, estadodao, paisdao, cidadedao, produtodao);
 
-        progressBar();
+       importacaodao.saveImportacao(getImportacao(ConvesorUtil.stringParaDate(getDateTime()),1000));
+
+
+
 
     }
+
+    public Importacao getImportacao(Date data,Integer Totalregistro){
+        return new Importacao(data,Totalregistro);
+
+    }
+
 
     public File nomeDiretorioImportacao() {
 
@@ -193,12 +219,27 @@ public class ImportacaoActivity extends AppCompatActivity {
 
    public void progressBar(){
 
-       MaterialDialog app =
+       MaterialDialog dialog =
                new MaterialDialog.Builder(this)
                 .title(R.string.progress_bar)
-                .content(R.string.Aguarde)
-                .progress(true, 0)
+                       .content(R.string.Aguarde)
+                       .progress(true, 0)
                        .show();
+
+
+
+
+
+    }
+
+
+
+    private static String getDateTime() {
+        Calendar c = Calendar.getInstance();
+        int ano = c.get(Calendar.YEAR);
+        int mes = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return (day +"/" + mes + "/" + ano);
     }
 
 

@@ -182,4 +182,35 @@
          PRIMARY KEY (idPedido, idVendedor, idPessoa,idProduto));
    </string>
 
+   <string name="SQL_CREATE_TABELA_IMPORTACAO">
+         CREATE TABLE Importacao (
+         idImportacao INTEGER PRIMARY KEY AUTOINCREMENT,
+         DataImportacao DATE NULL,
+         QuantidadeRegistro INTEGER NOT NULL
+         );
+
+  </string>
+
+    <string name="SQL_CREATE_TABELA_EXPORTACAO">
+         CREATE TABLE Exportacao (
+         idExportacao INTEGER PRIMARY KEY AUTOINCREMENT,
+         idUltimaPedidoExportado INTEGER NOT NULL,
+         DataExportacao DATE NOT NULL,
+         QuantidadeRegistro INTEGER NULL,
+         FOREIGN KEY(idUltimaPedidoExportado)
+         REFERENCES Exportacao(idUltimaPedidoExportado)
+        );
+
+    </string>
+    <string name="SQL_CREATE_TABELA_ULTIMOPEDIDOEXPORTADO">
+        CREATE TABLE UltimaPedidoExportado (
+        idUltimaPedidoExportado INTEGER PRIMARY KEY AUTOINCREMENT,
+        idVendedor INTEGER NOT NULL,
+        idPessoa INTEGER NOT NULL,
+        idPedido INTEGER NOT NULL,
+        FOREIGN KEY (idPedido, idVendedor, idPessoa)
+        REFERENCES Pedido (idPedido, idVendedor, idPessoa)
+       );
+    </string>
+
 </resources>

@@ -36,7 +36,6 @@ public class AppDao extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //  db.execSQL(res.getString(R.string.SQL_CREATE_BANCO));
         db.execSQL(res.getString(R.string.SQL_CREATE_PAIS));
         db.execSQL(res.getString(R.string.SQL_CREATE_ESTADO));
         db.execSQL(res.getString(R.string.SQL_CREATE_CIDADE));
@@ -53,6 +52,9 @@ public class AppDao extends SQLiteOpenHelper {
         db.execSQL(res.getString(R.string.SQL_CREATE_TABELA_ITEN_PRECO));
         db.execSQL(res.getString(R.string.SQL_CREATE_TABELA_PEDIDO));
         db.execSQL(res.getString(R.string.SQL_CREATE_TABELA_ITENS_PEDIDO));
+        db.execSQL(res.getString(R.string.SQL_CREATE_TABELA_IMPORTACAO));
+        db.execSQL(res.getString(R.string.SQL_CREATE_TABELA_ULTIMOPEDIDOEXPORTADO));
+        db.execSQL(res.getString(R.string.SQL_CREATE_TABELA_EXPORTACAO));
 
     }
 
@@ -71,24 +73,42 @@ public class AppDao extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + "UnidadeMedida");
         db.execSQL("DROP TABLE IF EXISTS " + "Produto");
         db.execSQL("DROP TABLE IF EXISTS " + "TabelaPreco");
+        db.execSQL("DROP TABLE IF EXISTS " + "TabelaItenPreco");
+        db.execSQL("DROP TABLE IF EXISTS " + "Pedido");
+        db.execSQL("DROP TABLE IF EXISTS " + "ItensPedido");
+        db.execSQL("DROP TABLE IF EXISTS " + "Importacao");
+        db.execSQL("DROP TABLE IF EXISTS " + "Exportacao");
+        db.execSQL("DROP TABLE IF EXISTS " + "UltimaPedidoExportado");
 
         onCreate(db);
 
     }
 
 
-//    public String validaUsuario(String user) {
-//        Cursor consulta = getReadableDatabase().rawQuery("Select id_estado from estado where id_estado = ? ", new String[]{user});
-//         String e;
-//        if (consulta.getCount() == 1) {
-//            return e = consulta.getString(0);
-//
-//        }
-//        else return"2";
-//
-//    }
+    public void deletaRegistroBanco() {
+        getWritableDatabase().execSQL("DELETE FROM " + "Pais");
+        getWritableDatabase().execSQL("DELETE FROM " + "Estado");
+        getWritableDatabase().execSQL("DELETE FROM " + "Cidade");
+        getWritableDatabase().execSQL("DELETE FROM " + "Telefone");
+        getWritableDatabase().execSQL("DELETE FROM " + "Pessoa");
+       /* getWritableDatabase().execSQL("DELETE FROM " + "Filial");
+        getWritableDatabase().execSQL("DELETE FROM " + "Condicao_pagamento");
+        getWritableDatabase().execSQL("DELETE FROM " + "Vendedor");
+        getWritableDatabase().execSQL("DELETE FROM " + "Parametro");*/
+        getWritableDatabase().execSQL("DELETE FROM " + "GrupoProduto");
+        getWritableDatabase().execSQL("DELETE FROM " + "UnidadeMedida");
+        getWritableDatabase().execSQL("DELETE FROM " + "Produto");
+        /*getWritableDatabase().execSQL("DELETE FROM " + "TabelaPreco");
+        getWritableDatabase().execSQL("DELETE FROM " + "TabelaItenPreco");
+        getWritableDatabase().execSQL("DELETE FROM " + "Pedido");
+        getWritableDatabase().execSQL("DELETE FROM " + "ItensPedido");
+        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "Importacao");
+        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "Exportacao");
+        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "UltimaPedidoExportado");*/
 
-//
+    }
+
+
 
 }
 
