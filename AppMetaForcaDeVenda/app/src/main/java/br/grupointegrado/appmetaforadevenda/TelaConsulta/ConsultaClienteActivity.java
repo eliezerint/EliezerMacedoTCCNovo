@@ -65,6 +65,7 @@ public class ConsultaClienteActivity extends AppCompatActivity {
     private List<Cidade> listaCidade;
     private ArrayAdapter<Cidade> cidade_adapter;
     private String conteudocidade;
+    private String flag = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +109,10 @@ public class ConsultaClienteActivity extends AppCompatActivity {
                     setResult(RESULT_OK, data);
                     finish();
                 }else {
-
                     MaterialDialogLigar(pessoa);
+
+
+
 
 
                 }
@@ -126,7 +129,13 @@ public class ConsultaClienteActivity extends AppCompatActivity {
                 idpessoa = pessoa.getIdpessoa();
                 CNPJCPF = pessoa.getCnpjCpf();
 
-                MaterialDialogCidade(pessoa);
+                if (clientedao.pessoaflag(pessoa.getIdpessoa().toString()).equals("F")){
+                    MaterialDialogCidade(pessoa);
+                }else {
+                    Toast.makeText(mContext,"Este arquivo não pode ser alterado ou excluido ",Toast.LENGTH_SHORT).show();
+                }
+
+
 
                 return true;
             }

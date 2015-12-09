@@ -23,16 +23,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
 
-           <android.support.v7.widget.RecyclerView
-               android:id="@+id/RecyviewPedido"
-               android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btnExportarTXT"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Exportar TXT"/>
+
+           <Button
+               android:id="@+id/btnExportarPDF"
+               android:layout_marginLeft="25dp"
+               android:layout_width="160dp"
                android:layout_height="wrap_content"
-               >
-
-           </android.support.v7.widget.RecyclerView>
+               android:text="Exportar PDF"/>
 
         </LinearLayout>
 

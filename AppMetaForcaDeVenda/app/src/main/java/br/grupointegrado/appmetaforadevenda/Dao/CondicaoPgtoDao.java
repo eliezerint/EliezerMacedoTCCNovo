@@ -19,11 +19,13 @@ public class CondicaoPgtoDao extends  AppDao {
         super(context);
     }
 
-    public void saveCondPgto(String condpgto,Double qtde,Integer intervalos) {
+    public void saveCondPgto(CondicaoPagamento condicao) {
         ContentValues cv = new ContentValues();
-        cv.put("Descricao", condpgto);
-        cv.put("Nr_parcelas", qtde);
-        cv.put("Intervalos", intervalos);
+
+        cv.put("idcondicaopagamento", condicao.getIdcodicaopagamento());
+        cv.put("Descricao", condicao.getDescricao());
+        cv.put("Nr_parcelas", condicao.getQuantidade());
+        cv.put("Intervalos", condicao.getIntervelo());
 
 
         getWritableDatabase().insert("Condicao_pagamento", null, cv);

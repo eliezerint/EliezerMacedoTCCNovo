@@ -5,10 +5,10 @@ package br.grupointegrado.appmetaforadevenda.Pedido;
  */
 public class CondicaoPagamento {
 
-    Integer Idcodicaopagamento;
-    String descricao;
-    Double quantidade;
-    Integer intervelo;
+    private Integer Idcodicaopagamento;
+    private String descricao;
+    private Double quantidade;
+    private Integer intervelo;
 
 
 
@@ -23,20 +23,20 @@ public class CondicaoPagamento {
 
     }
 
-    public Integer getIntervelo() {
-        return intervelo;
-    }
-
-    public void setIntervalo(Integer intervelo) {
-        this.intervelo = intervelo;
-    }
-
     public Integer getIdcodicaopagamento() {
         return Idcodicaopagamento;
     }
 
     public void setIdcodicaopagamento(Integer idcodicaopagamento) {
         Idcodicaopagamento = idcodicaopagamento;
+    }
+
+    public Integer getIntervelo() {
+        return intervelo;
+    }
+
+    public void setIntervalo(Integer intervelo) {
+        this.intervelo = intervelo;
     }
 
     public Double getQuantidade() {

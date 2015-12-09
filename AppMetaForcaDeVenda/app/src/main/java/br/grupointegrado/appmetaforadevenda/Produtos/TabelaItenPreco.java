@@ -1,10 +1,12 @@
 
 package br.grupointegrado.appmetaforadevenda.Produtos;
 
+import java.io.Serializable;
+
 /**
  * Created by eli on 03/11/2015.
  */
-public class TabelaItenPreco {
+public class TabelaItenPreco implements Serializable {
 
     private Integer idtabelaItenpreco;
     private Integer idtabelapreco;

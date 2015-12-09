@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -32,11 +33,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
 import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
+import br.grupointegrado.appmetaforadevenda.Dao.ExportacaoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PedidoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PessoaDao;
@@ -75,6 +78,9 @@ public class ExportacaoActivity extends AppCompatActivity {
     private List<Pedido> listapedido;
     private List<ItensPedido> listaitens;
 
+    private Button btnExportarTXT;
+    private Button btnExportarPDF;
+
     private RecyclerView recyclerviewpedido;
     private AdapterPedido adapterpedido;
 
@@ -86,6 +92,9 @@ public class ExportacaoActivity extends AppCompatActivity {
     private List lista;
     private String Item;
     private File arquivoTxtPDF;
+    private List<Pessoa> listapessoa;
+    private List<Cidade> listacidade;
+    private ExportacaoDao exportacaodao;
 
 
     @Override
@@ -107,142 +116,64 @@ public class ExportacaoActivity extends AppCompatActivity {
         pessoadao = new PessoaDao(this);
         paisdao = new PaisDao(this);
         pedidodao = new PedidoDao(this);
+        exportacaodao = new ExportacaoDao(this);
 
         recyclerviewpedido = (RecyclerView)findViewById(R.id.RecyviewPedido);
+
+        btnExportarPDF = (Button)findViewById(R.id.btnExportarPDF);
+        btnExportarTXT = (Button)findViewById(R.id.btnExportarTXT);
 
         if(getIntent().getExtras() != null){
             fazendoExportacao = getIntent().getExtras().getBoolean("fazendo_exportacao",false);
         }
 
 
-        recyclerviewpedido = (RecyclerView) findViewById(R.id.RecyviewPedido);
-
-        final StaggeredGridLayoutManager llm = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-        llm.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        recyclerviewpedido.setLayoutManager(llm);
-
-        adapterpedido = new AdapterPedido(this, new ArrayList<Pedido>()) {
+        btnExportarTXT.setOnClickListener(new View.OnClickListener() {
             @Override
-            protected void onItemClickListener(int adapterPosition, int layoutPosition) {
-                // evento de click simples
+            public void onClick(View v) {
+                listaitens = pedidodao.listitensExportacao();
+                listapedido = pedidodao.listPedidoExportacaoTXT();
 
+                if (!listapedido.isEmpty() && !listaitens.isEmpty()) {
 
-                Pedido pedido = adapterpedido.getItems().get(adapterPosition);
-                if (fazendoExportacao) {
-                    Intent data = new Intent();
-                    data.putExtra("pedido_id", pedido.getIdpedido());
-                    setResult(RESULT_OK, data);
-                    finish();
-                } else {
-                    idpedido = pedido.getIdpedido();
-                    nomepedido = pedido.getNome();
-                    ExportarArquvo((pedido));
+                    String name = "/meta-exportacao" + getDateTime() + ".txt";
+                    ExportarPedido.exportarTxt(listapedido, listaitens, nomeDiretorioExportacao(), name,exportacaodao);
 
+                    File diretoriocriado = new File(nomeDiretorioExportacao(), name);
+                    if (diretoriocriado.exists()) {
+
+                        enviarArquivo(name);
+                    }
+                }else {
+                    Toast.makeText(v.getContext(),"Não tem pedido para ser exportado",Toast.LENGTH_SHORT).show();
                 }
 
-            }
-
-            @Override
-            protected boolean onLongItemClickListener(int adapterPosition, int layoutPosition) {
-                // evento e click longo
-                Pedido  pedido = adapterpedido.getItems().get(adapterPosition);
-                idpedido = pedido.getIdpedido();
-                nomepedido = pedido.getNome();
-
-                ExportarArquvo(pedido);
-
-
-
-
-                return true;
-            }
-        };
-
-
-        recyclerviewpedido.setAdapter(adapterpedido);
-
-
-        nomeDiretorioExportacao();
-        ConsultaPedido();
-
-        ListaExportacao();
-    }
-
-
-    public void ExportarArquvo(final Pedido pedido) {
-        new MaterialDialog.Builder(this)
-                .title("Pedido")
-                .items(R.array.Array_de_Exportacao)
-                .negativeText("sair")
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-
-                        if (text.equals("ExportarPDF")) {
-                            criarPdf(pedido);
-                            enviarEmail(pedido);
-
-                            dialog.dismiss();
-                        } else if (text.equals("ExportarTXT")) {
-
-                            listaitens = pedidodao.listitens(pedido.getIdpedido().toString());
-                            listapedido = pedidodao.listCodigo(pedido.getIdpedido().toString());
-                            ExportarPedido.exportarTxt(listapedido, listaitens, nomeDiretorioExportacao());
-                            PreencherLista(pedido);
-                            enviarEmail(pedido);
-                            dialog.dismiss();
-                        }
-
-
-                    }
-
-                })
-                .show();
-
-    }
-    public void enviarEmail(final Pedido pedido) {
-        final MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title("Exportar")
-                .customView(R.layout.layout_dialogs_listaexportar, true)
-                .positiveText("Salvar")
-                .negativeText("Sair")
-                .autoDismiss(false)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        dialog.dismiss();
-                    }
-
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        dialog.dismiss();
-                    }
-                }).build();
-
-         listview = (ListView)dialog.findViewById(R.id.listviewExportacao);
-
-        ListaExportacao();
-
-        lista = listArquivos;
-
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-                (this,android.R.layout.simple_list_item_1, lista);
-
-        listview.setAdapter(arrayAdapter);
-
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Item = listview.getAdapter().getItem(position).toString();
-                enviarArquivo(Item);
 
             }
         });
 
-        dialog.show();
+        btnExportarPDF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Item = criarPdf();
 
+                System.out.println(Item);
+                if (Item != null){
+
+                    enviarArquivo(Item);
+                }
+
+            }
+        });
+
+        nomeDiretorioExportacao();
+
+
+        ListaExportacao();
     }
+
+
+
 
 
     public void enviarArquivo(String nomeItem){
@@ -250,7 +181,7 @@ public class ExportacaoActivity extends AppCompatActivity {
         arquivoTxtPDF = new File(nomeDiretorioExportacao().toString(),nomeItem);
 
         Intent email = new Intent(Intent.ACTION_SEND);
-        email.putExtra(Intent.EXTRA_EMAIL, new String[]{pessoa.getEmail()});
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{""});
         email.putExtra(Intent.EXTRA_SUBJECT, "");
         email.putExtra(Intent.EXTRA_TEXT,"" );
         email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + arquivoTxtPDF.getAbsolutePath()));
@@ -259,11 +190,7 @@ public class ExportacaoActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_tela_exportacao, menu);
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -283,25 +210,8 @@ public class ExportacaoActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
 
-            adapterpedido.setItems(pedidodao.list());
-            adapterpedido.notifyDataSetChanged();
-
-
-
-    }
-
-    private void ConsultaPedido() {
-
-        adapterpedido.setItems(pedidodao.list());
-        adapterpedido.notifyDataSetChanged();
-
-
-    }
 
 
     public void ListaExportacao(){
@@ -327,16 +237,7 @@ public class ExportacaoActivity extends AppCompatActivity {
         }
 
     }
-  public void PreencherLista(Pedido pedido) {
 
-      pessoa = pessoadao.retornaPessoa(pedido.getIdpessoa().toString());
-      cidade = cidadedao.retornaCidade(pessoa.getIdCidade().toString());
-      estado = estadodao.retornaEstado(cidade.getIdestado());
-      pais = paisdao.retornaPais(estado.getIdpais());
-      listatelefone = pessoadao.listTelefone(pessoa.getIdpessoa().toString());
-      listapedido = pedidodao.listCodigoCliente(pessoa.getIdpessoa().toString());
-
-  }
 
     public File nomeDiretorioExportacao() {
 
@@ -357,40 +258,58 @@ public class ExportacaoActivity extends AppCompatActivity {
 
 
     //cria arquivo pdf
-    public void criarPdf(Pedido pedido){
+    public String criarPdf(){
 
-        PreencherLista(pedido);
+        listapessoa = pessoadao.listExportacaoPDF();
+        listacidade = cidadedao.listExportacaoPDF();
+        listatelefone = pessoadao.listTelefoneExportacaoPdf();
+        listapedido = pedidodao.listPessoaExportacaoPDF();
 
-        Document documento = new Document();
-        File pdffile = new File(nomeDiretorioExportacao(), "/"+pessoa.getRazaoSocialNome()+".pdf");
-
-
-        try {
-
-            if (!pdffile.exists()){
-                PdfWriter.getInstance(documento, new FileOutputStream(pdffile));
+      if ((!listapessoa.isEmpty()) && (!listacidade.isEmpty()) && (!listatelefone.isEmpty()) && (!listapedido.isEmpty())) {
 
 
-                documento.open();
-                addMetaData(documento);
-                addContent(documento,pais,estado,cidade,pessoa,listatelefone,listapedido,pedidodao);
-                documento.close();
+          Document documento = new Document();
+          File pdffile = new File(nomeDiretorioExportacao(), "/Exportação" + getDateTime() + ".pdf");
+
+          String name = "/Exportação" + getDateTime() + ".pdf";
+
+          try {
+
+
+                  PdfWriter.getInstance(documento, new FileOutputStream(pdffile));
+
+
+                  documento.open();
+                  addMetaData(documento);
+                  addContent(documento, listacidade, listapessoa, listatelefone, listapedido, pedidodao);
+
+
+                  documento.close();
+
+                  Toast.makeText(this, "Arquivo criado com sucesso", Toast.LENGTH_SHORT).show();
+
+                  return name;
 
 
 
-                documento.close();
 
-                Toast.makeText(this, "Arquivo criado com sucesso", Toast.LENGTH_SHORT).show();
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
 
-            }else {
-                Toast.makeText(this, "Arquivo do cliente já existe", Toast.LENGTH_SHORT).show();
-            }
+      }else {
+          Toast.makeText(this, "Não tem Arquivo para exportação .PDF", Toast.LENGTH_SHORT).show();
+      }
+        return "";
 
+    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    private static String getDateTime() {
+        Calendar c = Calendar.getInstance();
+        int ano = c.get(Calendar.YEAR);
+        int mes = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return ("-" + day +"-" + mes  + "-" + ano);
     }
 
     private static void addMetaData(Document document) {
@@ -427,7 +346,7 @@ public class ExportacaoActivity extends AppCompatActivity {
     }
 
 
-    private static void addContent(Document document,Pais pais,Estado estado,Cidade cidade, Pessoa pessoa,
+    private static void addContent(Document document,List<Cidade>listacidade,List<Pessoa> listapessoa,
                                    List<Telefone> listatelefone, List<Pedido> listapedido,PedidoDao pedidodao)throws DocumentException {
 
 
@@ -441,28 +360,19 @@ public class ExportacaoActivity extends AppCompatActivity {
 
         Paragraph subPara = new Paragraph("Cadastro de Cidade ", subFont);
         Section subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("Nome   :"+ cidade.getDescricao()));
-        subCatPart.add(new Paragraph("Estado :"+ cidade.getIdestado()));
-        subCatPart.add(new Paragraph("País   :"+ cidade.getPais()));
-        subCatPart.add(new Paragraph("IBGE   :"+ cidade.getIbge()));
+
+        createListCidade(subCatPart, listacidade);
+        Paragraph paragraphCidade = new Paragraph();
+        addEmptyLine(paragraphCidade, listacidade.size());
+        subCatPart.add(paragraphCidade);
 
         subPara = new Paragraph("Cadastro de cliente", subFont);
         subCatPart = catPart.addSection(subPara);
-        subCatPart.add(new Paragraph("CPF/CNPJ  : "+pessoa.getCnpjCpf()));
-        subCatPart.add(new Paragraph("RG        : "+pessoa.getInscriEstadualRG()));
-        subCatPart.add(new Paragraph("Nome/RazãoSocial     : "+pessoa.getRazaoSocialNome()));
-        subCatPart.add(new Paragraph("Apelido/Nome Fatasia : "+pessoa.getFantasiaApelido()));
-        subCatPart.add(new Paragraph("Data Nascimento      : "+pessoa.getDataNascimento().toString()));
-        subCatPart.add(new Paragraph("Cidade     : "+pessoa.getIdCidade()));
-        subCatPart.add(new Paragraph("Email      : "+pessoa.getEmail()));
-        subCatPart.add(new Paragraph("Rua/Av     : "+pessoa.getEndereco()));
-        subCatPart.add(new Paragraph("Bairro     : "+pessoa.getBairro()));
-        subCatPart.add(new Paragraph("Numero     : "+pessoa.getNumero()));
-        subCatPart.add(new Paragraph("Complemento: "+pessoa.getComplemento()));
-        subCatPart.add(new Paragraph("CEP        : "+pessoa.getCep()));
-        subCatPart.add(new Paragraph("Data Cadastro        : "+pessoa.getDataCadastro().toString()));
-        subCatPart.add(new Paragraph("Data Utima venda     : "+pessoa.getDataUltimacompra().toString()));
-        subCatPart.add(new Paragraph("Valor Utilma venda   : " +String.format("%.2f",pessoa.getValorUltimacompra())));
+
+        createListPessoa(subCatPart, listapessoa);
+        Paragraph paragraphPessoa = new Paragraph();
+        addEmptyLine(paragraphPessoa, listapessoa.size());
+        subCatPart.add(paragraphPessoa);
 
         subPara = new Paragraph("Cadastro de Telefone ", subFont);
         subCatPart = catPart.addSection(subPara);
@@ -503,6 +413,50 @@ public class ExportacaoActivity extends AppCompatActivity {
 
     }
 
+    private static void createListCidade(Section subCatPart,List<Cidade>listacidade) {
+        ListItem list = new ListItem();
+
+        for(int x = 0; x < listacidade.size(); x++){
+            list.add(new ListItem("Cidade  : "+ (x+1)));
+            list.add(new ListItem("Nome   :"+ listacidade.get(x).getDescricao()));
+            list.add(new ListItem("Estado : "+ listacidade.get(x).getIdestado()));
+            list.add(new ListItem("Pais : "+listacidade.get(x).getPais()));
+            list.add(new ListItem("Ibge : "+ listacidade.get(x).getIbge()));
+
+        }
+        subCatPart.add(list);
+
+
+    }
+
+    private static void createListPessoa(Section subCatPart,List<Pessoa>listapessoa) {
+        ListItem list = new ListItem();
+
+
+        for(int x = 0; x < listapessoa.size(); x++){
+            list.add(new ListItem("Cidade  : "+ (x+1)));
+            list.add(new ListItem("CPF/CNPJ  : "+listapessoa.get(x).getCnpjCpf()));
+            list.add(new ListItem("RG        : "+listapessoa.get(x).getInscriEstadualRG()));
+            list.add(new ListItem("Nome/RazãoSocial     : "+listapessoa.get(x).getRazaoSocialNome()));
+            list.add(new ListItem("Apelido/Nome Fatasia : "+listapessoa.get(x).getFantasiaApelido()));
+            list.add(new ListItem("Cidade     : "+listapessoa.get(x).getIdCidade()));
+            list.add(new ListItem("Email      : "+listapessoa.get(x).getEmail()));
+            list.add(new ListItem("Rua/Av     : "+listapessoa.get(x).getEndereco()));
+            list.add(new ListItem("Bairro     : "+listapessoa.get(x).getBairro()));
+            list.add(new ListItem("Numero     : "+listapessoa.get(x).getNumero()));
+            list.add(new ListItem("Complemento: "+listapessoa.get(x).getComplemento()));
+            list.add(new ListItem("CEP        : "+listapessoa.get(x).getCep()));
+            list.add(new ListItem("Data Cadastro        : "+listapessoa.get(x).getDataCadastro().toString()));
+            list.add(new ListItem("Data Utima venda     : "+listapessoa.get(x).getDataUltimacompra().toString()));
+            list.add(new ListItem("Valor Utilma venda   : " +String.format("%.2f", listapessoa.get(x).getValorUltimacompra())));
+
+
+        }
+        subCatPart.add(list);
+
+
+    }
+
     private static void createListPedido(Section subCatPart,List<Pedido>listapedido,PedidoDao pedidodao) {
         ListItem list = new ListItem();
         List<ItensPedido>listaItens = null;
@@ -534,6 +488,8 @@ public class ExportacaoActivity extends AppCompatActivity {
 
 
     }
+
+
 
     private ListItem createListItens(Section subCatPart,List<ItensPedido>listaItens) {
         ListItem list = new ListItem();

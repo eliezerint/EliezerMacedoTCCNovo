@@ -28,6 +28,7 @@ public class CidadeDao extends AppDao {
         cv.put("id_estado", cidade.getIdestado());
         cv.put("Descricao", cidade.getDescricao());
         cv.put("IBGE", cidade.getIbge());
+        cv.put("flag", cidade.getFlag());
 
 
         getWritableDatabase().insert("Cidade", null, cv);
@@ -118,7 +119,66 @@ public class CidadeDao extends AppDao {
         c.close();
         return cidades;
 
-    }public List<Cidade> list(String nomecidade) {
+    }
+
+    public List<Cidade> listCod(String idcidade) {
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
+                " c.descricao,c.IBGE  from Cidade c " +
+                " inner join estado es  on(es.id_estado = c.id_estado )" +
+                " inner join Pais p on (p.idPais = es.idPais) where" +
+                " c.id_Cidade = ? ",new String[]{idcidade});
+
+        List<Cidade> cidades = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Cidade cidade = new Cidade();
+            cidade.setIdcidade(c.getInt(0));
+            cidade.setPais(c.getString(1));
+            cidade.setIdestado(c.getString(2));
+            cidade.setDescricao(c.getString(3));
+            cidade.setIbge(c.getString(4));
+
+            cidades.add(cidade);
+
+        }
+        c.close();
+        return cidades;
+    }
+
+    public List<Cidade> listExportacaoPDF() {
+        Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
+                "  c.descricao,c.IBGE  from Cidade c " +
+                "  inner join estado es  on(es.id_estado = c.id_estado ) " +
+                "  inner join Pais p on (p.idPais = es.idPais) " +
+                "   where c.flag = 'F' " +
+                "   ",null);
+
+        List<Cidade> cidades = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Cidade cidade = new Cidade();
+            cidade.setIdcidade(c.getInt(0));
+            cidade.setPais(c.getString(1));
+            cidade.setIdestado(c.getString(2));
+            cidade.setDescricao(c.getString(3));
+            cidade.setIbge(c.getString(4));
+
+            cidades.add(cidade);
+
+        }
+        c.close();
+        return cidades;
+    }
+
+
+
+
+
+    public List<Cidade> list(String nomecidade) {
         Cursor c = getReadableDatabase().rawQuery("Select c.id_Cidade, p.Nome as pais, c.id_estado, " +
                 "  c.descricao,c.IBGE  from Cidade c " +
                 "  inner join estado es  on(es.id_estado = c.id_estado ) " +
@@ -245,6 +305,29 @@ public class CidadeDao extends AppDao {
         }
 
         return nome;
+
+
+    }
+    public String cidadeflag(String idcidade){
+        Cursor consulta = getReadableDatabase().rawQuery("Select flag from Cidade " +
+                        "where id_Cidade = ? ",
+                new String[]{idcidade});
+        String flag = "" ;
+
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return flag = consulta.getString(0);
+                }
+            } finally {
+                consulta.close();
+            }
+
+
+
+        }
+
+        return flag;
 
 
     }

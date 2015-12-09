@@ -125,6 +125,39 @@ public class PedidoDao extends AppDao {
 
     }
 
+    public List<Pedido> listPedidoExportacaoTXT() {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor , " +
+                "  p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , " +
+                "   p.Data_pedido , p.Valor_total " +
+                "     From Pedido p " +
+                "     inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "      where  pe.flag = 'V' ", null);
+
+        List<Pedido> pedidos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pedido pedido = new Pedido();
+            pedido.setIdpedido(c.getInt(0));
+            pedido.setIdpessoa(c.getInt(1));
+            pedido.setIdvendedor(c.getInt(2));
+            pedido.setIdCondicaopag(c.getInt(3));
+            pedido.setIdfilial(c.getInt(4));
+            pedido.setNome(c.getString(5));
+            pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(6)));
+            pedido.setTotal(c.getDouble(7));
+
+
+            pedidos.add(pedido);
+
+        }
+        c.close();
+        return pedidos;
+
+
+    }
+
     public List<Pedido> listCodigo(String id) {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
                 " p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , c.descricao,  " +
@@ -159,6 +192,41 @@ public class PedidoDao extends AppDao {
 
 
     }
+    public List<Pedido> listPessoaExportacaoPDF() {
+        Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
+                " p.idcondicaopagamento , p.idFilial , pe.Razao_socialNome , c.descricao,  " +
+                "  p.Data_pedido , p.Valor_total " +
+                "  From Pedido p " +
+                "  inner join Pessoa pe on (p.idPessoa = pe.idPessoa) " +
+                "  inner join Cidade c on (pe.id_Cidade = c.id_Cidade)" +
+                "  where  pe.flag = 'F' ", null);
+
+        List<Pedido> pedidos = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pedido pedido = new Pedido();
+            pedido.setIdpedido(c.getInt(0));
+            pedido.setIdpessoa(c.getInt(1));
+            pedido.setIdvendedor(c.getInt(2));
+            pedido.setIdCondicaopag(c.getInt(3));
+            pedido.setIdfilial(c.getInt(4));
+            pedido.setNome(c.getString(5));
+            pedido.setCidade(c.getString(6));
+            pedido.setDatapedido(ConvesorUtil.stringParaDate(c.getString(7)));
+            pedido.setTotal(c.getDouble(8));
+
+
+            pedidos.add(pedido);
+
+        }
+        c.close();
+        return pedidos;
+
+
+    }
+
 
     public List<Pedido> listCodigoCliente(String id) {
         Cursor c = getReadableDatabase().rawQuery("Select  p.idPedido,   p.idPessoa, p.idVendedor ," +
@@ -404,6 +472,42 @@ public class PedidoDao extends AppDao {
 
 
     }
+
+    public List<ItensPedido> listitensExportacao() {
+        Cursor c = getReadableDatabase().rawQuery("select  i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
+                "      i.Quantidade, i.vl_unitario, ((i.vl_unitario-(i.vl_unitario*i.desconto/100)) * i.Quantidade)as total" +
+                "      from ItensPedido i" +
+                "      inner join Produto p on (p.idProduto = i.idProduto)" +
+                "      inner join Pessoa pe on (pe.idPessoa = i.idPessoa)" +
+                "       where pe.flag = 'V' " +
+                "      ", null);
+
+        List<ItensPedido> itens = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            ItensPedido iten = new ItensPedido();
+            iten.setIdpedido(c.getInt(0));
+            iten.setIdProduto(c.getInt(1));
+            iten.setNomeproduto(c.getString(2));
+            iten.setIdpessoa(c.getInt(3));
+            iten.setIdvendedor(c.getInt(4));
+            iten.setDesconto(c.getDouble(5));
+            iten.setQuantidade(c.getDouble(6));
+            iten.setVlunitario(c.getDouble(7));
+            iten.setTotal(c.getDouble(8));
+
+
+            itens.add(iten);
+
+        }
+        c.close();
+        return itens;
+
+
+    }
+
     public List<ItensPedido> listitens(String idpedido) {
         Cursor c = getReadableDatabase().rawQuery("select  i.idPedido, i.idProduto, p.Descricao, i.idVendedor, i.idPessoa, i.Desconto, " +
                 "      i.Quantidade, i.vl_unitario, ((i.vl_unitario-(i.vl_unitario*i.desconto/100)) * i.Quantidade)as total" +

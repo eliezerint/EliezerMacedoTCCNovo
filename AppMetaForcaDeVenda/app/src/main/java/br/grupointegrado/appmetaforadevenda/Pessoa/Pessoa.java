@@ -29,6 +29,7 @@ public class Pessoa implements Serializable {
     private  Date dataUltimacompra;
     private  Double valorUltimacompra = 0.00;
     private  Date dataNascimento;
+    private String flag;
 
 
 
@@ -52,6 +53,7 @@ public class Pessoa implements Serializable {
         this.dataUltimacompra = dataUltimacompra;
         this.inscriEstadualRG = inscriEstadualRG;
         this.valorUltimacompra = valorUltimacompra;
+
     }
 
 
@@ -81,8 +83,43 @@ public class Pessoa implements Serializable {
 
 
 
+
     }
 
+    public Pessoa(Integer idpessoa,Integer idCidade, String cnpjCpf,String razaoSocialNome, String fantasiaApelido,
+                  String inscriEstadualRG , String endereco ,String Numero, String bairro,String complemento, String Cep,
+                  Date dataNascimento,String Email,Date dataUltimacompra , double valorUltimacompra,Date dataCadastro,String flag) {
+        this.idpessoa = idpessoa;
+        this.idCidade = idCidade;
+        this.CnpjCpf = cnpjCpf;
+        this.Numero = Numero;
+        this.bairro = bairro;
+        this.complemento = complemento;
+        this.cep = Cep;
+        this.dataCadastro = dataCadastro;
+        this.Endereco = endereco;
+        this.Email = Email;
+        this.RazaoSocialNome = razaoSocialNome;
+        this.fantasiaApelido = fantasiaApelido;
+        this.dataNascimento = dataNascimento;
+        this.dataUltimacompra = dataUltimacompra;
+        this.inscriEstadualRG = inscriEstadualRG;
+        this.valorUltimacompra = valorUltimacompra;
+        this.flag = flag;
+
+
+
+    }
+
+
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
     public Integer getIdpessoa() {
         return idpessoa;

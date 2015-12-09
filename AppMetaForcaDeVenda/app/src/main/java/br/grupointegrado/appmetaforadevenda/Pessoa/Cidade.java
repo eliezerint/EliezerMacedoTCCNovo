@@ -14,6 +14,7 @@ public class Cidade  implements Serializable {
     private String ibge;
     private String Pais;
     private String nomeestado;
+    private String flag;
 
 
     public Cidade( String pais, String idestado,String descricao, String ibge) {
@@ -22,6 +23,15 @@ public class Cidade  implements Serializable {
         this.descricao = descricao;
         this.ibge = ibge;
     }
+    public Cidade( String pais, String idestado,Integer idcidade, String descricao, String ibge, String flag) {
+        this.Pais = pais;
+        this.idestado = idestado;
+        this.idcidade = idcidade;
+        this.descricao = descricao;
+        this.ibge = ibge;
+        this.flag = flag;
+    }
+
     public Cidade( String pais, String idestado,Integer idcidade, String descricao, String ibge) {
         this.Pais = pais;
         this.idestado = idestado;
@@ -38,6 +48,13 @@ public class Cidade  implements Serializable {
         this.ibge = ibge;
     }
 
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
     public Cidade() {
 

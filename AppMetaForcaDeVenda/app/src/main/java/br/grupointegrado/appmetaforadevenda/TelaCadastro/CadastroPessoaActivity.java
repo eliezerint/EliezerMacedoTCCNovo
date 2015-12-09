@@ -115,15 +115,17 @@ public class CadastroPessoaActivity extends AppCompatActivity {
                         if (fragPes.ispessoAlt() == false) {
 
                             try {
+
                                 pessoadao.savePessoa(fragPes.getPessoa());
                                 int idpessoa = pessoadao.CosultaClienteCNPJCPF(fragPes.getPessoa().getCnpjCpf());
                                 String CPFCNPJ = fragPes.getPessoa().getCnpjCpf();
-
+                                int idtelefone = pessoadao.retornaIdparainserttelefone();
 
                                 if (tamanho > 0) {
                                     for (int x = 0; x < tamanho; x++) {
                                         try {
-                                            pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                            pessoadao.saveTelefone(fragTel.getTelefone(idtelefone,idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                            idtelefone++;
                                         } catch (Exception e) {
                                             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                                         }
@@ -146,11 +148,15 @@ public class CadastroPessoaActivity extends AppCompatActivity {
 
                                 pessoadao.Update(fragPes.getPessoa());
                                 pessoadao.deleteTelefone(idpessoa);
+
+
+                                int idtelefone = pessoadao.retornaIdparainserttelefone();
                                 if (tamanho > 0) {
 
                                     for (int x = 0; x < tamanho; x++) {
                                         try {
-                                            pessoadao.saveTelefone(fragTel.getTelefone(idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                            pessoadao.saveTelefone(fragTel.getTelefone(idtelefone,idpessoa, fragPes.getPessoa().getCnpjCpf(), x));
+                                            idtelefone++;
                                         } catch (Exception e) {
                                             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
                                         }

@@ -8,7 +8,9 @@ public class Tabelapreco {
     private Integer idTabelapreco;
     private Integer idProduto;
     private String descricao;
-    private String descricaoiten;
+    private String descricaoProduto;
+    private String descricaotabelaItem;
+    private Double vlUnitario;
 
     public Tabelapreco() {
 
@@ -18,12 +20,12 @@ public class Tabelapreco {
         return idTabelapreco;
     }
 
-    public String getDescricaoiten() {
-        return descricaoiten;
+    public String getDescricaoProduto() {
+        return descricaoProduto;
     }
 
-    public void setDescricaoiten(String descricaoiten) {
-        this.descricaoiten = descricaoiten;
+    public void setDescricaoProduto(String descricaoProduto) {
+        this.descricaoProduto = descricaoProduto;
     }
 
     public void setIdTabelapreco(Integer idTabelapreco) {
@@ -44,6 +46,22 @@ public class Tabelapreco {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public String getDescricaotabelaItem() {
+        return descricaotabelaItem;
+    }
+
+    public void setDescricaotabelaItem(String descricaotabelaItem) {
+        this.descricaotabelaItem = descricaotabelaItem;
+    }
+
+    public Double getVlUnitario() {
+        return vlUnitario;
+    }
+
+    public void setVlUnitario(Double vlUnitario) {
+        this.vlUnitario = vlUnitario;
     }
 
     @Override

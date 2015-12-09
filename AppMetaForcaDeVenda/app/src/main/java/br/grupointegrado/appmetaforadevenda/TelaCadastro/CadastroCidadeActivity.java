@@ -66,6 +66,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
     private MaterialEditText EditCidade;
 
     @MinLength(value = 7, messageId = R.string.min_ibge, order = 5)
+    @NotEmpty(messageId =  R.string.Campo_vazio, order = 5)
     private MaterialEditText EditIbge;
 
 
@@ -81,6 +82,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
     private Intent cidadeIntent;
     private long tempopresionadovoltar = 0;
     private TextWatcher Ibgemask;
+    private  String flag = "F";
 
 
     @Override
@@ -126,11 +128,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 conteudopais = SpinnerPais.getText().toString();
-                if (conteudopais.equals("BR")) {
-                    EditIbge.setVisibility(View.VISIBLE);
-                } else {
-                    EditIbge.setVisibility(View.GONE);
-                }
+
                 consultaestado();
             }
 
@@ -151,34 +149,13 @@ public class CadastroCidadeActivity extends AppCompatActivity {
 
 
 
-        EditIbge.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
-                   if (!verificaEditIbge()){
-                       EditIbge.setError("O campo IBGE não pode ser vazio");
-                   }
-                }
-            }
-        });
 
 
         FormValidator.startLiveValidation(this, findViewById(R.id.cad_cid_container),new SimpleErrorPopupCallback(getBaseContext()));
 
     }
 
-    private Boolean verificaEditIbge() {
-        if (SpinnerPais.getText().toString().isEmpty()){
-            if(EditIbge.getText().toString().isEmpty()){
-               return false;
-            }
-        }else if(SpinnerPais.getText().toString().equals("BRASIL")){
-            if(EditIbge.getText().toString().isEmpty()){
-               return false;
-            }
-        }
-        return true;
-    }
+
 
     @Override
     protected void onStart() {
@@ -257,7 +234,8 @@ public class CadastroCidadeActivity extends AppCompatActivity {
                 conteudoestado,
                 idcidade,
                 EditCidade.getText().toString(),
-                Mask.unmask(EditIbge.getText().toString()));
+                Mask.unmask(EditIbge.getText().toString()),
+                flag);
 
 
     }
@@ -268,7 +246,8 @@ public class CadastroCidadeActivity extends AppCompatActivity {
                 conteudoestado,
                 idcidade,
                 EditCidade.getText().toString(),
-                Mask.unmask(EditIbge.getText().toString()));
+                Mask.unmask(EditIbge.getText().toString()),
+                flag);
 
 
     }
@@ -316,11 +295,7 @@ public class CadastroCidadeActivity extends AppCompatActivity {
     public boolean Validate(){
         final boolean isValid = FormValidator.validate(this, new SimpleErrorPopupCallback(getBaseContext(), true));
         if (isValid){
-            if (verificaEditIbge()){
-                   return  true;
-            }else {
-                EditIbge.setError("O campo IBGE não pode ser vazio");
-            }
+            return true;
         }
 
 

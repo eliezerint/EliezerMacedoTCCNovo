@@ -7,6 +7,13 @@
 
 
     </string-array>
+
+    <string-array name="Array_de_Importacao">
+        <item>Sim</item>
+        <item>Não</item>
+
+
+    </string-array>
     <string-array name="Array_de_Ligar">
         <item>Ligar</item>
         <item>Mandar Email</item>
@@ -47,6 +54,7 @@
         <item>Vendedor</item>
         <item>Condição Pagamento</item>
         <item>Produto</item>
+        <item>Tabela de Preço</item>
     </string-array>
 
     <string-array name="Array_tp_Importação_consulta">

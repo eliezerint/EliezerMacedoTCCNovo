@@ -32,6 +32,7 @@ public class PessoaDao extends AppDao {
 
     public void saveTelefone(Telefone telefone) {
         ContentValues cv = new ContentValues();
+        cv.put("idTelefone", telefone.getIdTelefone());
         cv.put("Numero", telefone.getNumero());
         cv.put("Descricao", telefone.getTipo());
         cv.put("idPessoa", telefone.getIdPessoa());
@@ -39,6 +40,29 @@ public class PessoaDao extends AppDao {
 
 
         getWritableDatabase().insert("Telefone", null, cv);
+
+    }
+
+    public Integer retornaIdparainserttelefone(){
+        Cursor consulta = getReadableDatabase().rawQuery("Select COALESCE(Max(idTelefone),0) + 1 AS MAX from Telefone ",
+                null);
+        Integer id = 0;
+
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return id = consulta.getInt(0);
+                }
+            } finally {
+                consulta.close();
+            }
+
+
+
+        }
+
+        return id;
+
 
     }
     public void updateTelefone(Telefone telefone) {
@@ -80,11 +104,38 @@ public class PessoaDao extends AppDao {
         c.close();
         return telefones;
     }
+    public List<Telefone> listTelefoneExportacaoPdf() {
+        Cursor c = getReadableDatabase().rawQuery("Select " +
+                " t.idTelefone,t.idPessoa, t.numero,t.Descricao, t.CPFCNPJ  From Telefone t" +
+                " inner join Pessoa p on (p.idPessoa = t.idPessoa ) " +
+                " where p.flag = 'F' ", null);
+
+        List<Telefone> telefones = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Telefone telefone = new Telefone();
+            telefone.setIdTelefone(c.getInt(0));
+            telefone.setIdPessoa(c.getInt(1));
+            telefone.setNumero(c.getString(2));
+            telefone.setTipo(c.getString(3));
+            telefone.setCPF(c.getString(4));
+
+
+
+            telefones.add(telefone);
+
+        }
+        c.close();
+        return telefones;
+    }
 
     // inserção e consulta de pessoa
 
     public void savePessoa(Pessoa pessoa) {
         ContentValues cv = new ContentValues();
+        cv.put("idPessoa", pessoa.getIdpessoa());
         cv.put("id_Cidade", pessoa.getIdCidade());
         cv.put("CNPJCPF", pessoa.getCnpjCpf());
         cv.put("Endereco", pessoa.getEndereco());
@@ -100,6 +151,7 @@ public class PessoaDao extends AppDao {
         cv.put("inscriEstadualRG", pessoa.getInscriEstadualRG());
         cv.put("Data_ultima_compra", (dateParaString(pessoa.getDataUltimacompra())));
         cv.put("Valor_ultima_compra", pessoa.getValorUltimacompra());
+        cv.put("flag", pessoa.getFlag());
 
 
 
@@ -130,6 +182,30 @@ public class PessoaDao extends AppDao {
 
         getWritableDatabase().update("Pessoa", cv, "idPessoa = ?", new String[]{pessoa.getIdpessoa().toString()});
 
+
+
+    }
+
+    public String pessoaflag(String idPessoa){
+        Cursor consulta = getReadableDatabase().rawQuery("Select flag from Pessoa " +
+                        "where idPessoa = ? ",
+                new String[]{idPessoa});
+        String flag = "" ;
+
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return flag = consulta.getString(0);
+                }
+            } finally {
+                consulta.close();
+            }
+
+
+
+        }
+
+        return flag;
 
 
     }
@@ -197,6 +273,48 @@ public class PessoaDao extends AppDao {
                 " where p.idPessoa = t.idPessoa " +
                 " group by p.idPessoa " +
                 " HAVING p.Razao_socialNome like ?" , new String[]{"%"+nome+"%"});
+
+        List<Pessoa> pessoas = new ArrayList<>();
+
+
+        while (c.moveToNext()) {
+
+            Pessoa pessoa = new Pessoa();
+            pessoa.setIdpessoa(c.getInt(0));
+            pessoa.setIdCidade(c.getInt(1));
+            pessoa.setCnpjCpf(c.getString(2));
+            pessoa.setEndereco(c.getString(3));
+            pessoa.setNumero(c.getString(4));
+            pessoa.setTelefone(c.getString(5));
+            pessoa.setBairro(c.getString(6));
+            pessoa.setCep(c.getString(7));
+            pessoa.setDataNascimento(stringParaSQLDate(c.getString(8)));
+            pessoa.setDataCadastro(stringParaSQLDate(c.getString(9)));
+            pessoa.setComplemento(c.getString(10));
+            pessoa.setEmail(c.getString(11));
+            pessoa.setRazaoSocialNome(c.getString(12));
+            pessoa.setFantasiaApelido(c.getString(13));
+            pessoa.setInscriEstadualRG(c.getString(14));
+            pessoa.setDataUltimacompra(stringParaSQLDate(c.getString(15)));
+            pessoa.setValorUltimacompra(c.getDouble(16));
+
+
+
+            pessoas.add(pessoa);
+
+        }
+        c.close();
+        return pessoas;
+    }
+
+    public List<Pessoa> listExportacaoPDF() {
+        Cursor c = getReadableDatabase().rawQuery("Select p.idPessoa, p.id_Cidade, p.CNPJCPF, p.Endereco, p.Numero, t.Numero as telefone," +
+                " p.Bairro, p.cep, p.Data_Nascimento, p.Data_Cadastro, p.Complemento, p.Email, p.Razao_socialNome, " +
+                " p.Nome_fantasiaApelido, p.inscriEstadualRG, p.Data_ultima_compra, p.Valor_ultima_compra  " +
+                " From Pessoa p ,Telefone t " +
+                " where p.idPessoa = t.idPessoa " +
+                " group by p.idPessoa " +
+                " HAVING p.flag = 'F' " , null);
 
         List<Pessoa> pessoas = new ArrayList<>();
 
@@ -452,6 +570,29 @@ public class PessoaDao extends AppDao {
         }
 
         return nome;
+
+
+    }
+
+    public Integer retornaIdparainsert(){
+        Cursor consulta = getReadableDatabase().rawQuery("Select COALESCE(Max(idPessoa),0) + 1 AS MAX from Pessoa ",
+                null);
+        Integer id = 0;
+
+        if (consulta != null) {
+            try {
+                if (consulta.moveToFirst()) {
+                    return id = consulta.getInt(0);
+                }
+            } finally {
+                consulta.close();
+            }
+
+
+
+        }
+
+        return id;
 
 
     }

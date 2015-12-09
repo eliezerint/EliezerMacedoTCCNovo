@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 
 
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -100,7 +101,11 @@ public class MainActivity extends AppCompatActivity {
 
                         entrar();
 
-                    } else
+                    } else if(vendedordao.verificaImportacao() == 0){
+                        edtcdVendedor.setError("Não foi feita nenhuma Importação");
+                        DialogsDadosImpor();
+                    }
+                    else
                         edtcdVendedor.setError("Vendedor nao autorizado");
 
                 } else {
@@ -113,15 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         criaDiretorio(new String[]{"/Importacao", "/Exportacao"});
-
-
-       lista = vendedordao.list();
-        if (lista.isEmpty()){
-            vendedorteste();
-            condpgtoteste();
-            filialTeste();
-            precoTeste();
-        }
 
 
 
@@ -145,6 +141,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -155,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case android.R.id.home:
                 onBackPressed();
+                break;
+
+            case R.id.Importar:
+                fazerImportacao();
                 break;
         }
 
@@ -261,7 +268,7 @@ public void DialogsDadosImpor() {
     }
 
 
-
+/*
     public void vendedorteste(){
         vendedordao.saveVendedor("Lucas", 20.00);
         vendedordao.saveVendedor("Amanda",  30.00);
@@ -269,7 +276,7 @@ public void DialogsDadosImpor() {
     }
 
      //Teste para inserir produtos
-   /* public void produtoteste(){
+    public void produtoteste(){
         produtodao.saveGrupoProduto("Higiene pessoal");
         produtodao.saveGrupoProduto("Limpeza");
 
@@ -307,7 +314,7 @@ public void DialogsDadosImpor() {
 
 
    */
-    public void precoTeste(){
+    /*public void precoTeste(){
         produtodao.savePreco("1", "Atacado");
         produtodao.saveItemtabelaPreco("1", "Avista", 1.75);
         produtodao.saveItemtabelaPreco("1","Aprazo",2.00);
@@ -349,7 +356,7 @@ public void DialogsDadosImpor() {
         condpgtodao.saveCondPgto("15 dias",1.0,15);
         condpgtodao.saveCondPgto("A prazo",1.0,15);
     }
-
+*/
 
 
 

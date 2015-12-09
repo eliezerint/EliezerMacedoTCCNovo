@@ -19,10 +19,11 @@ public class VendedorDao extends AppDao {
         super(context);
     }
 
-    public void saveVendedor(String nome, Double max_acres) {
+    public void saveVendedor(Vendedor vendedor) {
         ContentValues cv = new ContentValues();
-        cv.put("Nome", nome);
-        cv.put("Max_Desconto", max_acres);
+        cv.put("idVendedor",vendedor.getIdvendedor() );
+        cv.put("Nome", vendedor.getNome());
+        cv.put("Max_Desconto", vendedor.getMax_desconto());
 
 
 
@@ -116,6 +117,15 @@ public class VendedorDao extends AppDao {
             return true;
 
         else return false;
+    }
+
+
+    public Integer verificaImportacao(){
+        Cursor c = getReadableDatabase().rawQuery("Select * from Vendedor ", null);
+        if (c.getCount() > 0)
+            return c.getCount();
+
+        else return 0;
     }
 
     // Consulta Vendedor

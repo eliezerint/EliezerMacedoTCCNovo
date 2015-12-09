@@ -91,18 +91,18 @@ public class AppDao extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("DELETE FROM " + "Cidade");
         getWritableDatabase().execSQL("DELETE FROM " + "Telefone");
         getWritableDatabase().execSQL("DELETE FROM " + "Pessoa");
-       /* getWritableDatabase().execSQL("DELETE FROM " + "Filial");
+        getWritableDatabase().execSQL("DELETE FROM " + "Filial");
         getWritableDatabase().execSQL("DELETE FROM " + "Condicao_pagamento");
         getWritableDatabase().execSQL("DELETE FROM " + "Vendedor");
-        getWritableDatabase().execSQL("DELETE FROM " + "Parametro");*/
+      //  getWritableDatabase().execSQL("DELETE FROM " + "Parametro");
         getWritableDatabase().execSQL("DELETE FROM " + "GrupoProduto");
         getWritableDatabase().execSQL("DELETE FROM " + "UnidadeMedida");
         getWritableDatabase().execSQL("DELETE FROM " + "Produto");
-        /*getWritableDatabase().execSQL("DELETE FROM " + "TabelaPreco");
+        getWritableDatabase().execSQL("DELETE FROM " + "TabelaPreco");
         getWritableDatabase().execSQL("DELETE FROM " + "TabelaItenPreco");
         getWritableDatabase().execSQL("DELETE FROM " + "Pedido");
         getWritableDatabase().execSQL("DELETE FROM " + "ItensPedido");
-        getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "Importacao");
+       /* getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "Importacao");
         getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "Exportacao");
         getWritableDatabase().execSQL("DROP TABLE IF EXISTS " + "UltimaPedidoExportado");*/
 

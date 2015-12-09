@@ -55,7 +55,7 @@
                     app:met_primaryColor="?colorPrimary"
                     app:met_singleLineEllipsis="true" />
 
-                />
+
 
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/SpinnerEstado"

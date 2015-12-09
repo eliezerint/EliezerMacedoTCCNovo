@@ -22,9 +22,10 @@ public class FilialDao extends AppDao {
         super(context);
     }
 
-    public void saveFilial(String filial) {
+    public void saveFilial(Filial filial) {
         ContentValues cv = new ContentValues();
-        cv.put("Descricao", filial);
+        cv.put("idFilial",filial.getIdfilial());
+        cv.put("Descricao", filial.getDescricao());
 
 
 

@@ -6,15 +6,28 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 import br.grupointegrado.appmetaforadevenda.Dao.CidadeDao;
+import br.grupointegrado.appmetaforadevenda.Dao.CondicaoPgtoDao;
 import br.grupointegrado.appmetaforadevenda.Dao.EstadoDao;
+import br.grupointegrado.appmetaforadevenda.Dao.FilialDao;
 import br.grupointegrado.appmetaforadevenda.Dao.PaisDao;
+import br.grupointegrado.appmetaforadevenda.Dao.PedidoDao;
+import br.grupointegrado.appmetaforadevenda.Dao.PessoaDao;
 import br.grupointegrado.appmetaforadevenda.Dao.ProdutoDao;
+import br.grupointegrado.appmetaforadevenda.Dao.VendedorDao;
+import br.grupointegrado.appmetaforadevenda.Pedido.CondicaoPagamento;
+import br.grupointegrado.appmetaforadevenda.Pedido.Filial;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Cidade;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Estado;
 import br.grupointegrado.appmetaforadevenda.Pessoa.Pais;
+import br.grupointegrado.appmetaforadevenda.Pessoa.Pessoa;
+import br.grupointegrado.appmetaforadevenda.Pessoa.Telefone;
 import br.grupointegrado.appmetaforadevenda.Produtos.GrupoProdutos;
 import br.grupointegrado.appmetaforadevenda.Produtos.Produtos;
+import br.grupointegrado.appmetaforadevenda.Produtos.TabelaItenPreco;
+import br.grupointegrado.appmetaforadevenda.Produtos.Tabelapreco;
 import br.grupointegrado.appmetaforadevenda.Produtos.UnidadeMedida;
+import br.grupointegrado.appmetaforadevenda.Util.ConvesorUtil;
+import br.grupointegrado.appmetaforadevenda.Vendedor.Vendedor;
 
 import java.util.StringTokenizer;
 
@@ -26,7 +39,7 @@ public class ImportacaoDados {
 
     public static Integer TotalRegistro;
 
-    public static void importarCidade(File arquivo, CidadeDao cidadedao) {
+    public static boolean ValidaArquivo(File arquivo) {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(arquivo);
@@ -36,52 +49,21 @@ public class ImportacaoDados {
                 System.out.println("Linha do arquivo: " + linha);
                 String[] partes = linha.split("\\|");
 
-                System.out.println("tamanho:" + partes.length);
-                if (partes[1].equals("1")) {
-                    System.out.println("Cod.Unimake:" + partes[1]);
-                    System.out.println("DataImportação:" + partes[2]);
-                    System.out.println("Hora:" + partes[3]);
-                }else if(partes.length > 5){
-                    System.out.println("Cod.Unimake:" + partes[1]);
-                    System.out.println("ID:" + partes[2]);
-                    System.out.println("UF:" + partes[3]);
-                    System.out.println("Nome:" + partes[4]);
-                    System.out.println("Nome:" + partes[5]);
-                    }else {
-                    System.out.println("Cod.Unimake:" + partes[1]);
-                    System.out.println("ID:" + partes[2]);
-                    System.out.println("UF:" + partes[3]);
-                    System.out.println("Nome:" + partes[4]);
-
+                if (partes[1].equals("Pais")){
+                    fis.close();
+                    return true;
                 }
 
-                if (partes[1].equals("2")) {
-                    Cidade cidade = new Cidade();
-                    cidade.setIdcidade(Integer.parseInt(partes[2]));
-                    cidade.setIdestado(partes[3]);
-                    cidade.setDescricao(partes[4]);
-                    if (partes.length > 5 ){
-                        cidade.setIbge(partes[5]);
-                    }else {
-                        cidade.setIbge(" ");
-                    }
-
-
-                    cidadedao.saveCidade(cidade);
-                } else if (partes[1].equals("9")) {
-                    break;
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                fis.close();
-            } catch (Exception e) {
-            }
         }
+
+            return false;
+
     }
-    public static void importarDados(File arquivo, EstadoDao estadodao, PaisDao paisdao, CidadeDao cidadedao, ProdutoDao produtodao) {
+    public static void importarDados(File arquivo, EstadoDao estadodao, PaisDao paisdao, CidadeDao cidadedao,
+                                     ProdutoDao produtodao, PessoaDao pessoadao,FilialDao filialdao ,CondicaoPgtoDao condicaodao, VendedorDao vendedordao) {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(arquivo);
@@ -108,6 +90,28 @@ public class ImportacaoDados {
                   }else if(partes[1].equals("Produto")) {
                       tabela = partes[1];
 
+                  }else if(partes[1].equals("Pessoa")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("Telefone")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("TabelaPreco")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("TabelaItemPreco")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("Filial")) {
+                      tabela = partes[1];
+
+                  }else if(partes[1].equals("CondicaoPgto")) {
+                      tabela = partes[1];
+
+                  }
+                  else if(partes[1].equals("Vendedor")) {
+                      tabela = partes[1];
+
                   }
 
 
@@ -123,6 +127,25 @@ public class ImportacaoDados {
                       salvarUnidade(partes, produtodao);
                   }else if (tabela.equals("Produto")){
                       salvarProduto(partes, produtodao);
+                  }else if (tabela.equals("Pessoa")){
+                      salvarClientes(partes, pessoadao);
+                  }else if (tabela.equals("Telefone")){
+                      salvarTelefone(partes,pessoadao);
+                  }
+                  else if (tabela.equals("TabelaPreco")){
+                      salvarTabela(partes,produtodao);
+                  }
+                  else if (tabela.equals("TabelaItemPreco")){
+                      salvarTabelaItemPreco(partes,produtodao);
+                  }
+                  else if (tabela.equals("Filial")){
+                      salvarFilial(partes,filialdao);
+                  }
+                  else if (tabela.equals("CondicaoPgto")){
+                      salvarCondicaoPgto(partes,condicaodao);
+                  }
+                  else if (tabela.equals("Vendedor")){
+                      salvarVendedor(partes,vendedordao);
                   }
 
 
@@ -180,6 +203,7 @@ public class ImportacaoDados {
             }else {
                 cidade.setIbge(" ");
             }
+            cidade.setFlag("V");
 
 
             cidadedao.saveCidade(cidade);
@@ -229,6 +253,129 @@ public class ImportacaoDados {
 
         }
     }
+
+    public static void salvarClientes(String[] partes, PessoaDao pessoadao) {
+        if (partes[1].equals("2")) {
+
+            Pessoa pessoa = new Pessoa();
+            pessoa.setIdpessoa(Integer.parseInt(partes[2]));
+            pessoa.setIdCidade(Integer.parseInt(partes[3]));
+            pessoa.setCnpjCpf(partes[4]);
+            pessoa.setRazaoSocialNome(partes[5]);
+            pessoa.setFantasiaApelido(partes[6]);
+            pessoa.setInscriEstadualRG(partes[7]);
+            pessoa.setDataNascimento(ConvesorUtil.stringParaDate(partes[8]));
+            pessoa.setEndereco(partes[9]);
+            pessoa.setNumero(partes[10]);
+            pessoa.setComplemento(partes[11]);
+            pessoa.setCep(partes[12]);
+            pessoa.setBairro(partes[13]);
+            pessoa.setEmail(partes[14]);
+            pessoa.setDataCadastro(ConvesorUtil.stringParaDate(partes[15]));
+            pessoa.setDataUltimacompra(ConvesorUtil.stringParaDate(partes[16]));
+            pessoa.setValorUltimacompra(ConvesorUtil.stringParaDouble(partes[17]));
+            pessoa.setFlag("V");
+
+
+            pessoadao.savePessoa(pessoa);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+    public static void salvarTelefone(String[] partes, PessoaDao pessoadao){
+        if (partes[1].equals("2")) {
+
+            Telefone telefone = new Telefone();
+            telefone.setIdTelefone(Integer.parseInt(partes[2]));
+            telefone.setIdPessoa(Integer.parseInt(partes[3]));
+            telefone.setCPF(partes[4]);
+            telefone.setNumero((partes[5]));
+            telefone.setTipo(partes[6]);
+
+
+            pessoadao.saveTelefone(telefone);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+    public static void salvarTabela(String[] partes, ProdutoDao produtodao){
+        if (partes[1].equals("2")) {
+
+            Tabelapreco tabela = new Tabelapreco();
+            tabela.setIdTabelapreco(Integer.parseInt(partes[2]));
+            tabela.setIdProduto(Integer.parseInt(partes[3]));
+            tabela.setDescricao((partes[4]));
+
+
+
+
+            produtodao.savePreco(tabela);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+    public static void salvarTabelaItemPreco(String[] partes, ProdutoDao produtodao){
+        if (partes[1].equals("2")) {
+
+            TabelaItenPreco tabelaitem = new TabelaItenPreco();
+            tabelaitem.setIdtabelaItenpreco(Integer.parseInt(partes[2]));
+            tabelaitem.setIdtabelapreco(Integer.parseInt(partes[3]));
+            tabelaitem.setDescricao((partes[4]));
+            tabelaitem.setVlunitario(Double.parseDouble(partes[5]));
+
+
+            produtodao.saveItemtabelaPreco(tabelaitem);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+    public static void salvarFilial(String[] partes, FilialDao filialdao){
+        if (partes[1].equals("2")) {
+
+            Filial filial = new Filial();
+            filial.setIdfilial(Integer.parseInt(partes[2]));
+            filial.setDescricao((partes[3]));
+
+
+
+            filialdao.saveFilial(filial);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+    public static void salvarCondicaoPgto(String[] partes, CondicaoPgtoDao condicaodao){
+        if (partes[1].equals("2")) {
+
+             CondicaoPagamento condicao = new CondicaoPagamento();
+            condicao.setIdcodicaopagamento(Integer.parseInt(partes[2]));
+            condicao.setDescricao((partes[3]));
+            condicao.setQuantidade(Double.parseDouble(partes[4]));
+            condicao.setIntervalo(Integer.parseInt(partes[5]));
+
+
+            condicaodao.saveCondPgto(condicao);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+    public static void salvarVendedor(String[] partes, VendedorDao vendedordao){
+        if (partes[1].equals("2")) {
+
+            Vendedor vendededor = new Vendedor();
+            vendededor.setIdvendedor(Integer.parseInt(partes[2]));
+            vendededor.setNome((partes[3]));
+            vendededor.setMax_desconto(Double.parseDouble(partes[4]));
+
+
+            vendedordao.saveVendedor(vendededor);
+        } else if (partes[1].equals("9")) {
+
+        }
+    }
+
+
+
+
 
 
 

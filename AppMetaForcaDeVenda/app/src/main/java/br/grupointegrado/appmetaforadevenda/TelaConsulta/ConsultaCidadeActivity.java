@@ -115,8 +115,12 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
                     setResult(RESULT_OK, data);
                     finish();
                 } else {
+                    if (cidadedao.cidadeflag(cidade.getIdcidade().toString()).equals("F")){
+                        EditarCidade(getCidade(cidade));
+                    }else {
+                        Toast.makeText(mContext,"Cidade não pode ser alterada ou excluida",Toast.LENGTH_SHORT).show();
+                    }
 
-                    EditarCidade(getCidade(cidade));
 
                 }
 
@@ -127,7 +131,12 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
                 // evento e click longo
                 Cidade cidade = adaptercidade.getItems().get(adapterPosition);
 
-                MaterialDialogCidade(cidade);
+                if (cidadedao.cidadeflag(cidade.getIdcidade().toString()).equals("F")){
+                    MaterialDialogCidade(cidade);
+                }else {
+                    Toast.makeText(mContext,"Cidade não pode ser alterada ou excluida",Toast.LENGTH_SHORT).show();
+                }
+
                 return true;
             }
         };
@@ -254,13 +263,13 @@ public class ConsultaCidadeActivity extends AppCompatActivity {
         super.onResume();
 
         if (conteudoSearch != null) {
-            if (soExisteNumero(conteudoSearch)){
+            if (soExisteNumero(conteudoSearch) && conteudoSearch.length() == 7){
                 conteudoSearch  = conteudoSearch.replace(" ","");
                 adaptercidade.setItems(cidadedao.listCodIbge(conteudoSearch));
                 adaptercidade.notifyDataSetChanged();
 
-            }else {
-                adaptercidade.setItems(cidadedao.list(conteudoSearch));
+            }else if(soExisteNumero(conteudoSearch)) {
+                adaptercidade.setItems(cidadedao.listCod(conteudoSearch));
                 adaptercidade.notifyDataSetChanged();
             }
         } else if (conteudopais != null && conteudoestado != null) {

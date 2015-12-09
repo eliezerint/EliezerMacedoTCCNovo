@@ -323,9 +323,9 @@ public class TelefoneFragment extends Fragment implements FragmentTab {
                 .show();
     }
 
-    public Telefone getTelefone(Integer idpessoa, String cpf, Integer x) {
+    public Telefone getTelefone(Integer idTelefone,Integer idpessoa, String cpf, Integer x) {
 
-        return new Telefone(idpessoa,
+        return new Telefone(idTelefone,idpessoa,
                (adaptertelefone.getItems().get(x).getNumero()),
                 adaptertelefone.getItems().get(x).getTipo(), cpf);
 

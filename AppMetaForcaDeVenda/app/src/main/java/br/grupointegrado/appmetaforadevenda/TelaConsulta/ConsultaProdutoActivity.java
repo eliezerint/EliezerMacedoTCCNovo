@@ -179,9 +179,6 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
         autocomplete.setAdapter(grupo_adapter);
 
-
-
-
         autocomplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -305,7 +302,7 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
 
                 consultaTabelaPreco(alttabelapreco.getIdTabelapreco(),0);
 
-                spinnerTabela_preco.setText(alttabelapreco.getDescricaoiten());
+                spinnerTabela_preco.setText(alttabelapreco.getDescricaoProduto());
 
                 edit_vlunitario.setText(editandoProduto.getVlunitario().toString());
                editandoItens(editandoProduto, dialog);
@@ -599,7 +596,9 @@ public class ConsultaProdutoActivity extends AppCompatActivity {
             case R.id.ConsultaProduto:
                 autocomplete.setText("");
                 conteudoGrupoProduto = null;
+                conteudoSearch = null;
                 consultaProduto();
+
 
                 break;
 

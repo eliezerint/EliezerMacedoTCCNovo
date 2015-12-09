@@ -3,12 +3,13 @@
 
      <string name="SQL_CREATE_CIDADE">
         CREATE TABLE Cidade (
-        id_Cidade INTEGER PRIMARY KEY,
-        id_estado VARCHAR(2) NOT NULL,
-        descricao VARCHAR(40) NOT NULL,
-        IBGE VARCHAR(7) NULL,
-        FOREIGN KEY(id_estado)
-         REFERENCES estado(id_estado),
+         id_Cidade INTEGER PRIMARY KEY,
+         id_estado VARCHAR(2) NOT NULL,
+         descricao VARCHAR(40) NOT NULL,
+         IBGE VARCHAR(7) NULL,
+         flag Char(1)NOT NULL,
+         FOREIGN KEY(id_estado)
+          REFERENCES estado(id_estado),
           UNIQUE (id_estado, descricao)
           );
 
@@ -22,7 +23,7 @@
         </string>
     <string name="SQL_CREATE_TELEFONE">
            CREATE TABLE Telefone (
-                idTelefone INTEGER PRIMARY KEY AUTOINCREMENT,
+                idTelefone INTEGER PRIMARY KEY,
                 idPessoa INTEGER not null,
                 Numero VARCHAR(11) NOT NULL,
                 Descricao VARCHAR(60),
@@ -32,7 +33,7 @@
     </string>
       <string name="SQL_CREATE_PESSOA">
            CREATE TABLE Pessoa (
-          idPessoa INTEGER  PRIMARY KEY AUTOINCREMENT,
+          idPessoa INTEGER  PRIMARY KEY ,
           id_Cidade INTEGER NOT NULL,
           CNPJCPF VARCHAR(14) NULL,
           Endereco VARCHAR(50) NULL,
@@ -48,6 +49,7 @@
           inscriEstadualRG VARCHAR(14) NULL,
           Data_ultima_compra DATE NULL,
           Valor_ultima_compra DOUBLE(5,2) NULL,
+          flag Char(1)NOT NULL,
           FOREIGN KEY(id_Cidade)
           REFERENCES Cidade(id_Cidade)
         );
@@ -55,14 +57,14 @@
 
     <string name="SQL_CREATE_FILIAL">
           CREATE TABLE Filial (
-          idFilial INTEGER PRIMARY KEY AUTOINCREMENT,
+          idFilial INTEGER PRIMARY KEY ,
           Descricao VARCHAR(50) NULL
         );
     </string>
     <string name="SQL_CREATE_CONDPGTO">
 
         CREATE TABLE Condicao_pagamento (
-          idcondicaopagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+          idcondicaopagamento INTEGER PRIMARY KEY,
           Descricao VARCHAR(20) NULL,
           Nr_parcelas DOUBLE(5,2) NULL,
           Intervalos INTEGER
@@ -72,7 +74,7 @@
     <string name="SQL_CREATE_VENDEDOR">
 
         CREATE TABLE Vendedor (
-          idVendedor INTEGER PRIMARY KEY AUTOINCREMENT,
+          idVendedor INTEGER PRIMARY KEY ,
           Nome VARCHAR(50) NULL,
           Max_Desconto DOUBLE(5,2) NULL
         );
@@ -137,7 +139,7 @@
 
 
        CREATE TABLE TabelaPreco (
-       idTabelapreco INTEGER PRIMARY KEY AUTOINCREMENT,
+       idTabelapreco INTEGER PRIMARY KEY ,
        idProduto INTEGER  NOT NULL,
         descricao VARCHAR(20) NULL,
          FOREIGN KEY(idProduto)
@@ -147,7 +149,7 @@
 
      <string name="SQL_CREATE_TABELA_ITEN_PRECO" >
        CREATE TABLE TabelaItenPreco (
-       idTabelaItenpreco INTEGER  PRIMARY KEY AUTOINCREMENT,
+       idTabelaItenpreco INTEGER  PRIMARY KEY,
        idTabelapreco INTEGER NOT NULL,
        descricao VARCHAR(8) NULL,
        vlunitario DOUBLE(5,2) NULL,
@@ -203,8 +205,8 @@
 
     </string>
     <string name="SQL_CREATE_TABELA_ULTIMOPEDIDOEXPORTADO">
-        CREATE TABLE UltimaPedidoExportado (
-        idUltimaPedidoExportado INTEGER PRIMARY KEY AUTOINCREMENT,
+        CREATE TABLE UltimoPedidoExportado (
+        idUltimoPedidoExportado INTEGER PRIMARY KEY AUTOINCREMENT,
         idVendedor INTEGER NOT NULL,
         idPessoa INTEGER NOT NULL,
         idPedido INTEGER NOT NULL,

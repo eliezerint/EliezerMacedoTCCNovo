@@ -192,6 +192,7 @@ public class ConsultaPedidoActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.ConsultaPedido:
+                conteudoSearch = null;
                 ConsultaPedido();
                 break;
 

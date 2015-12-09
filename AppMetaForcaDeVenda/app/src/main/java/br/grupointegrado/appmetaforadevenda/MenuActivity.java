@@ -227,34 +227,11 @@ public class MenuActivity extends AppCompatActivity {
 
 
     public void FazerPedido() {
-        boolean wrapInScrollView = true;
-        MaterialDialog app = new MaterialDialog.Builder(this)
-                .title("Pedido")
-                .items(R.array.Array_tp_pedido_consulta)
-                .positiveText("Sair")
-                .autoDismiss(false)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        Intent i;
-                        if (text.equals("Consulta Pedido")) {
-                             i = new Intent(dialog.getContext(), ConsultaPedidoActivity.class);
 
-                            startActivity(i);
-                            dialog.dismiss();
-                        }
+        Intent i = new Intent(this, ConsultaPedidoActivity.class);
+        startActivity(i);
 
-                    }
-                })
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
 
-                        dialog.dismiss();
-                    }
-                })
-                .show();
 
     }
     public void consultaDadosPedido() {
@@ -284,6 +261,12 @@ public class MenuActivity extends AppCompatActivity {
                         }
                         else if (text.equals("Produto")) {
                              i = new Intent(dialog.getContext(), ConsultaProdutoActivity.class);
+                             startActivity(i);
+                             dialog.dismiss();
+
+                         }
+                         else if (text.equals("Tabela de Preço")) {
+                             i = new Intent(dialog.getContext(), ConsultaTabelaPrecoActivity.class);
                              startActivity(i);
                              dialog.dismiss();
 

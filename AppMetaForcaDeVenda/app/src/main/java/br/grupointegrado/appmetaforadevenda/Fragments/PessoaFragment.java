@@ -172,6 +172,8 @@ public class PessoaFragment extends Fragment implements DatePickerDialog.OnDateS
     private TextWatcher rgmask;
     private TextWatcher Incricaomask;
 
+    private  String flag = "F";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -521,6 +523,8 @@ public class PessoaFragment extends Fragment implements DatePickerDialog.OnDateS
     public Pessoa getPessoa() {
         String cpf = null, nome = null, apelido = null,
                 rg = null, datanascimento = null;
+        int idpessoainsert = clientedao.retornaIdparainsert();
+        idpessoa = idpessoainsert;
 
         if (radioFisica.isChecked()) {
             cpf = Mask.unmask(editCpf.getText().toString());
@@ -549,7 +553,7 @@ public class PessoaFragment extends Fragment implements DatePickerDialog.OnDateS
                 stringParaDate(editDataUltima.getText().toString()),
                 Double.parseDouble(editValorUltimacompra.getText().toString()),
                 stringParaDate(editDataCadastro.getText().
-                        toString())
+                        toString()),flag
 
         );
     }
